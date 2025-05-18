@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logo_description">Hund mit darunterstehenden Initialen des App Namens Rettungshunde Einsatz App R E A</string>
+    <string name="login">Einloggen</string>
+    <string name="logout">Abmelden</string>
+    <string name="security_level">Sicherheitslevel</string>
+
+    <string name="time">Zeit</string>
+    <string name="unknown">Unbekannt</string>
+
+    <string name="login_organisation_choice">-Bitte wählen-</string>
+    <string name="password_hide">Passwort ausblenden</string>
+    <string name="password_show">Passwort anzeigen</string>
+    <string name="username">Benutzername</string>
+    <string name="password">Passwort</string>
+    <string name="password_requirement_min_length">Mindestens 8 Zeichen</string>
+    <string name="password_requirement_letter">Enthält Buchstaben</string>
+    <string name="password_requirement_digit">Enthält Zahlen</string>
+    <string name="password_requirement_special_char">Enthält Sonderzeichen</string>
+    <string name="email">E-Mail</string>
+    <string name="color">Farbe</string>
+    <string name="color_select">Farbe auswählen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="please_wait">Bitte warten</string>
+    <string name="submit_data">Daten werden übertragen…</string>
+    <string name="success">Erfolg</string>
+    <string name="name">Name</string>
+    <string name="delete_data">Daten werden gelöscht…</string>
+    <string name="delete_data_succsses">Daten erfolgreich gelöscht</string>
+    <string name="track_color">Track Farbe</string>
+    <string name="accuracy">Genauigkeit</string>
+    <string name="edit_user">Benutzer Bearbeiten</string>
+    <string name="delete_user">Benutzer löschen</string>
+    <string name="failed">Fehlgeschlagen</string>
+    <string name="confirm">Bestätigen</string>
+    <string name="create">Erstellen</string>
+    <string name="last_point">Letzter Punkt</string>
+    <string name="phonenumber">Handynummer</string>
+    <string name="radio_call_name">Funkrufname</string>
+    <string name="login_organisation">Organisation</string>
+    <string name="login_login">Anmelden</string>
+    <string name="login_resetPassword">Passwort zurücksetzen</string>
+    <string name="login_check_input">Bitte Eingabe prüfen</string>
+    <string name="login_error_toast">Login gescheitert, bitte Eingaben prüfen!</string>
+
+    <string name="dashboard_activity_toast_get_user_data_success">Benutzerdaten erfolgreich aktualisiert</string>
+    <string name="dashboard_activity_toast_need_new_login">Erneuter Login notwendig</string>
+    <string name="toast_connection_error">Verbindungsfehler</string>
+    <string name="toast_unknown_error">Unbekannter Fehler</string>
+
+    <string name="dashboard_bottom_menu_start">Start</string>
+    <string name="dashboard_bottom_menu_map">Karte</string>
+    <string name="dashboard_bottom_menu_group">Gruppe</string>
+    <string name="dashboard_bottom_menu_settings">Einstellungen</string>
+
+    <string name="new_user_activity_title">Neuer Benutzer</string>
+    <string name="new_user_activity_valid_Dialog_title">Benutzer erstellen</string>
+    <string name="new_user_activity_valid_Dialog_text">"Sind Sie sicher, dass die Eingaben stimmen? \n \nBei Bestätigung wird der neue Benutzer erstellt und an diesem eine automatische E-Mail mit den Zugangsdaten zu REA gesendet. "</string>
+
+    <string name="settings_my_pfofile_title">👤 Mein Profil</string>
+    <string name="settings_zugfuhrer_function_title">🧑‍✈️ Zugführer Funktionen</string>
+    <string name="settings_admin_function_title">🧰 Administrator Funktionen</string>
+    <string name="settings_delete_all_gps_data">Alle GPS-Daten löschen</string>
+    <string name="settings_create_new_user">Erstelle neuen Benutzer</string>
+    <string name="settings_manage_users">Benutzer verwalten</string>
+    <string name="delete_all_gps_data_dialog_title">Alle GPS Daten löschen?</string>
+    <string name="delete_all_gps_data_dialog_text">Sind Sie sicher, dass Sie alle GPS-Daten auf dem Server löschen wollen? \n \nBei Bestätigung werden die auf dem Server gespeicherten GPS-Daten unwiederuflich gelöscht. Dieser Prozess kann nicht Rückgängig gemacht werden.</string>
+
+    <string name="dialog_delete_user_not_possible_title">Löschen nicht möglich</string>
+    <string name="dialog_delete_user_not_possible_text">Man kann sich selbst über die App nicht löschen. Daher ist das löschen nicht möglich.</string>
+
+    <string name="dialog_delete_user_title">Benutzer wirklich löschen?</string>
+    <string name="dialog_delete_user_text_line1">Wollen Sie den Benutzer \n \n</string>
+    <string name="dialog_delete_user_text_line2">\n \nwirklich löschen? Dies kann nicht mehr rückgängig gemacht werden, den Benutzer wird dann komplett gelöscht.</string>
+    <string name="dialog_delete_user_successful_line1">Benutzer \n \n</string>
+    <string name="dialog_delete_user_successful_line2">n \nerfolgreich gelöscht.</string>
+
+    <string name="area_description">Fläche: %.1f m²</string>
+
+    <string name="dialog_delete_my_GPS_data_title">Meine GPS Tracks?</string>
+    <string name="dialog_delete_all_GPS_data_title">Alle GPS-Tracks löschen?</string>
+    <string name="dialog_delete_all_areas_title">Alle Flächen löschen?</string>
+    <string name="dialog_delete_my_GPS_data_text">Wollen Sie ihre lokal gespeicherten GPS-Tracks löschen? \n \nDie Tracks werden dann nicht mehr auf der Karte angezeigt und auf dem Handy gelöscht. \n \nDiese Aktion kann nicht rückgängig gemacht werden!</string>
+    <string name="dialog_delete_all_GPS_data_text">Wollen Sie alle GPS-Tracks auf dem Server löschen? \n \nDie GPS-Tracks werden unwiderruflich entfernt und sind nicht mehr auf der Karte sichtbar. \n \nDiese Aktion kann nicht rückgängig gemacht werden!</string>
+    <string name="dialog_delete_all_areas_text">Wollen Sie alle gezeichneten Flächen entfernen? \n \nDie Flächen werdem sowohl lokal als auch auf dem Server gelöscht und nicht mehr auf der Karte angezeigt. \n \nDiese Aktion kann nicht mehr Rückgängig gemacht werden.</string>
+    <string name="dialog_delete_my_GPS_data_result">Eigene GPS-Daten erfolgreich vom lokalen Gerät gelöscht.</string>
+    <string name="dialog_delete_all_GPS_data_result">Alle GPS-Daten vom Server erfolgreich gelöscht.</string>
+    <string name="dialog_delete_all_areas_result">Alle Flächen vom Server erfolgreich gelöscht.</string>
+    <string name="dialog_invalid_input">Ungültige Eingabe</string>
+    <string name="dialog_invalid_input_or_error">Ungültige Eingabe oder Fehler</string>
+
+    <string name="add_area">Fläche hinzufügen</string>
+    <string name="area">Fläche</string>
+    <string name="refresh">Aktualisieren</string>
+    <string name="start_gps_tracking">GPS Tracking starten</string>
+    <string name="stop_gps_tracking">GPS Tracking beenden</string>
+    <string name="open_menu">Menü öffnen</string>
+    <string name="save">Speichern</string>
+    <string name="undo">Rückgängug machen</string>
+    <string name="my_position">Meine Position</string>
+    <string name="geographic_coordinates">Geographische Koordinaten</string>
+    <string name="last_update">Letzte Aktualisierung</string>
+    <string name="contacts">Kontakte</string>
+    <string name="delete_my_gps_data">Meine GPS Daten löschen</string>
+    <string name="delete_all_gps_data">Alle GPS Daten löschen</string>
+    <string name="delete_all_areas">Alle Flächen löschen</string>
+    <string name="write_operational_report">Einsatzbericht schreiben</string>
+    <string name="in_progress_points">Läuft…</string>
+    <string name="save_area">Fläche speichern</string>
+    <string name="name_of_area">Name der Fläche</string>
+    <string name="choose_color">Farbe wählen</string>
+    <string name="north">Nord</string>
+    <string name="south">Süd</string>
+    <string name="osm_copyright">OpenStreetMap Mitwirkende (ODbL)</string>
+    <string name="no_background_location_permission">Nicht erteilte Berechtigungen</string>
+    <string name="no_granted_location">Berechtigungen nicht erteilt</string>
+    <string name="location_fine">Genauer Standort</string>
+    <string name="location_coarse">Grober Standort</string>
+    <string name="location_background">Hintergrund Standort</string>
+    <string name="notification">Benachrichtigung</string>
+    <string name="gps_tacking_running_title">GPS-Tracking läuft</string>
+    <string name="gps_tacking_running_text">Die App zeichnet den Standort im Hintergrund auf</string>
+    <string name="change">Ändern</string>
+    <string name="settings">Einstellungen</string>
+    <string name="change_user_data_text">Nach Bestätigung wird der Benutzer entsprechend ihren Angaben geändert. Der Benutzer wird hierüber nicht automatisch benachrichtigt.</string>
+
+
+
+</resources>

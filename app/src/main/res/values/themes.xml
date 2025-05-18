@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.REAMaterialNoActionBar" parent="android:Theme.Material.Light.NoActionBar">
+    </style>
+
+    <style name="Theme.REAMaterialActionBar" parent="android:ThemeOverlay.Material.ActionBar">
+    </style>
+</resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+
+
+    <application
+        android:icon="@mipmap/icon_rea2"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/icon_rea2_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.REAMaterialNoActionBar"
+        android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="true">
+
+        <receiver android:name=".service.myLocation.StopLocationServiceReceiver" />
+
+
+        <service
+            android:name=".service.myLocation.MyLocationService"
+            android:foregroundServiceType="location"
+            android:exported="false" />
+
+        <activity android:name=".activity.ManageUserSingleViewActivity" android:exported="false" />
+        <activity android:name=".activity.LoginActivity" android:exported="false" />
+        <activity android:name=".activity.ResetPasswordActivity" android:exported="false" />
+        <activity android:name=".activity.ReportActivity" android:exported="false" />
+        <activity android:name=".activity.MapActivity" android:exported="false"
+            android:configChanges="keyboardHidden|orientation|screenSize|uiMode" />
+        <activity android:name=".activity.NewUserActivity" android:exported="false" />
+        <activity android:name=".activity.ContactActivity" android:exported="false" />
+        <activity android:name=".activity.SettingsActivity" android:exported="false" />
+        <activity android:name=".activity.ManageUsersOverviewActivity" android:exported="false" />
+        <activity android:name=".activity.StartActivity"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

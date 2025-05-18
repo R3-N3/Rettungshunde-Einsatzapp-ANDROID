@@ -1,33 +1,81 @@
-# Gradle files
+# macOS-spezifisch
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# macOS Ordner-Attribute
+__MACOSX/
+
+# Spotlight-Verschwende-Dateien
+.Spotlight-V100
+.Trashes
+
+# Icon-Dateien
+Icon?
+
+# Thumbnails
+._*
+
+# Android/Java/Gradle
 .gradle/
 build/
+*/build/
+!gradle/wrapper/gradle-wrapper.jar
 
-# Local configuration file (sdk path, etc)
-local.properties
+# Lokale IDE-Dateien (Android Studio / IntelliJ)
+.idea/
+*.iml
+*.iws
+*.ipr
+*.class
 
-# Log/OS Files
+# Log- und temporäre Dateien
 *.log
+*.tmp
+*.temp
 
-# Android Studio generated files and folders
+# Andere Tools
+local.properties
 captures/
 .externalNativeBuild/
 .cxx/
 *.apk
+*.ap_
+*.dex
+*.so
+*.jar
+*.keystore
+
+# NDK-Build-Dateien
+obj/
+libs/
+
+# Testresultate
+test-results/
+androidTest-results/
+
+# VSCode (wenn du es nutzt)
+.vscode/
+
+# Firebase
+google-services.json
+
+
+
+# Android Studio generated files and folders
 output.json
 
 # IntelliJ
-*.iml
-.idea/
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
 
 # Keystore files
 *.jks
-*.keystore
-
-# Google Services (e.g. APIs or Firebase)
-google-services.json
 
 # Android Profiling
 *.hprof
+
+*.properties
+
+keystore.properties

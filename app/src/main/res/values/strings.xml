@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name" translatable="false">Rettungshunde Einsatzapp</string>
+    <string name="app_name_first_word" translatable="false">Rettungshunde</string>
+    <string name="app_name_second_word" translatable="false">Einsatz</string>
+    <string name="app_name_third_word" translatable="false">App</string>
+    <string name="security_level">Security level </string>
+    <string name="security_level_ek" translatable="false">(1) Einsatzkraft</string>
+    <string name="security_level_zf" translatable="false">(2) Zugführer</string>
+    <string name="security_level_admin" translatable="false">(3) Administrator</string>
+    <string name="utm_mgrs" translatable="false">UTM MGRS</string>
+
+    <string name="logo_description">Dog with the initials of the app name underneath Rescue Dogs App R E A</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+
+    <string name="time">Time</string>
+    <string name="unknown">Unknown</string>
+
+
+    <string name="login_organisation_choice">-Choice-</string>
+    <string name="login_organisation_choice_1" translatable="false">BRH RHS Bonn/Rhein-Sieg</string>
+    <string name="login_organisation_choice_2" translatable="false">Demo</string>
+    <string name="password_hide">Hide password</string>
+    <string name="password_show">Show password</string>
+    <string name="password_requirement_min_length">At least 8 characters</string>
+    <string name="password_requirement_letter">Contains letters</string>
+    <string name="password_requirement_digit">Contains numbers </string>
+    <string name="password_requirement_special_char">Contains special characters</string>
+    <string name="username">Username</string>
+    <string name="name">Name</string>
+    <string name="password">Password</string>
+    <string name="email">E-Mail</string>
+    <string name="color">Color</string>
+    <string name="cancel">Cancel</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="last_point">Last Point</string>
+    <string name="please_wait">Please wait</string>
+    <string name="submit_data">Data is transferred…</string>
+    <string name="delete_data">Data will be deleted…</string>
+    <string name="delete_data_succsses">Data deleted successfully</string>
+    <string name="success">Success</string>
+    <string name="failed">Failed</string>
+    <string name="track_color">Track color</string>
+    <string name="edit_user">Edit User</string>
+    <string name="delete_user">Delete User</string>
+    <string name="create">Create</string>
+    <string name="confirm">Confirm</string>
+    <string name="color_select">Select color</string>
+    <string name="phonenumber">Cell phone number</string>
+    <string name="radio_call_name">Radio call name</string>
+    <string name="login_organisation">Organisation</string>
+    <string name="login_login">Login</string>
+    <string name="login_resetPassword">Reset Password</string>
+    <string name="login_check_input">Check input</string>
+    <string name="login_error_toast">Login failed, please check your entries!</string>
+
+    <string name="dashboard_activity_toast_get_user_data_success">User data updated successfully</string>
+    <string name="dashboard_activity_toast_need_new_login">Re-login required</string>
+    <string name="toast_connection_error">Connection error</string>
+    <string name="toast_unknown_error">Unknown error</string>
+
+    <string name="dashboard_bottom_menu_start">Start</string>
+    <string name="dashboard_bottom_menu_map">Map</string>
+    <string name="dashboard_bottom_menu_group">Group</string>
+    <string name="dashboard_bottom_menu_settings">Settings</string>
+
+    <string name="new_user_activity_title">New User</string>
+    <string name="new_user_activity_valid_Dialog_title">Create user</string>
+    <string name="new_user_activity_valid_Dialog_text">Are you sure the information is correct? \n \nUpon confirmation, the new user will be created and an automatic email will be sent to them with their REA login credentials.</string>
+
+    <string name="settings_my_pfofile_title">👤 My Profile</string>
+    <string name="settings_zugfuhrer_function_title">🧑‍✈️ Zugführer Functions</string>
+    <string name="settings_admin_function_title">🧰 Administrator Functions</string>
+    <string name="settings_delete_all_gps_data">Delete all GPS data</string>
+    <string name="settings_create_new_user">Create new user</string>
+    <string name="settings_manage_users">Manage users</string>
+    <string name="delete_all_gps_data_dialog_title">Delete all GPS data?</string>
+    <string name="delete_all_gps_data_dialog_text">Are you sure you want to delete all GPS data from the server? \n \nIf you confirm, the GPS data stored on the server will be permanently deleted. This process cannot be undone.</string>
+
+    <string name="dialog_delete_user_not_possible_title">Deletion not possible</string>
+    <string name="dialog_delete_user_not_possible_text">You can not delete yourself via the app, so deleting is not possible.</string>
+
+    <string name="dialog_delete_user_title">Really delete user?</string>
+    <string name="dialog_delete_user_text_line1">Do you really want to delete user: \n \n</string>
+    <string name="dialog_delete_user_text_line2">\n \nThis cannot be undone; the user will then be completely deleted.</string>
+    <string name="dialog_delete_user_successful_line1">User \n \n</string>
+    <string name="dialog_delete_user_successful_line2">n \nsuccessfully deleted.</string>
+
+    <string name="dialog_delete_my_GPS_data_title">Delete your own GPS data?</string>
+    <string name="dialog_delete_all_GPS_data_title">Delete all GPS data?</string>
+    <string name="dialog_delete_all_areas_title">Delete all areas?</string>
+    <string name="dialog_delete_my_GPS_data_text">Do you want to delete your locally stored GPS tracks? \n \nThe tracks will no longer be displayed on the map and will be deleted from your phone. \n \nThis action cannot be undone!</string>
+    <string name="dialog_delete_all_GPS_data_text">Do you want to delete all GPS tracks on the server? \n \nThe GPS tracks will be permanently removed and will no longer be visible on the map. \n \nThis action cannot be undone!</string>
+    <string name="dialog_delete_all_areas_text">Do you want to remove all drawn areas? \n \nThe areas will be deleted both locally and on the server and will no longer be displayed on the map. \n \nThis action cannot be undone.</string>
+    <string name="dialog_delete_my_GPS_data_result">Own GPS Tracks successfully deleted from the local device.</string>
+    <string name="dialog_delete_all_GPS_data_result">All GPS Tracks successfully deleted from the server.</string>
+    <string name="dialog_delete_all_areas_result">All areas successfully deleted from the server.</string>
+    <string name="dialog_invalid_input">Invalid input</string>
+    <string name="dialog_invalid_input_or_error">Invalid input or error</string>
+
+
+    <string name="area_description">Area: %.1f m²</string>
+
+    <string name="add_area">Add area</string>
+    <string name="area">Area</string>
+    <string name="refresh">Refresh</string>
+    <string name="start_gps_tracking">Start GPS tracking</string>
+    <string name="stop_gps_tracking">Stop GPS tracking</string>
+    <string name="open_menu">Open menu</string>
+    <string name="save">Save</string>
+    <string name="undo">Undo</string>
+    <string name="my_position">My position</string>
+    <string name="geographic_coordinates">Geographic coordinates</string>
+    <string name="last_update">Last Update</string>
+    <string name="contacts">Contacts</string>
+    <string name="delete_my_gps_data">Delete my GPS data</string>
+    <string name="delete_all_gps_data">Delete all GPS data</string>
+    <string name="delete_all_areas">Delete all Areas</string>
+    <string name="write_operational_report">Write operational report</string>
+    <string name="in_progress_points">In Progress…</string>
+    <string name="save_area">Save area</string>
+    <string name="name_of_area">Name of the area</string>
+    <string name="choose_color">Choose color</string>
+    <string name="north">North</string>
+    <string name="south">South</string>
+    <string name="osm_copyright">OpenStreetMap Contributors (ODbL)</string>
+    <string name="no_background_location_permission">Background location permission was not granted</string>
+    <string name="no_granted_location">Permissions not granted</string>
+    <string name="location_fine">Fine Location</string>
+    <string name="location_coarse">Coarse Location</string>
+    <string name="location_background">Background location</string>
+    <string name="notification">Notification</string>
+    <string name="gps_tacking_running_title">GPS tracking is running</string>
+    <string name="gps_tacking_running_text">The app records the location in the background</string>
+    <string name="change">Change</string>
+    <string name="settings">Settings</string>
+    <string name="change_user_data_text">After confirmation, the user details will be changed according to their preferences. The user will not be automatically notified.</string>
+
+
+
+
+
+
+</resources>
