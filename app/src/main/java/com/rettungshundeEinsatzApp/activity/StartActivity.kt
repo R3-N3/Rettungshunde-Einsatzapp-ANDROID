@@ -13,10 +13,10 @@ class StartActivity : ComponentActivity() {
 
         val sharedPreferences = getSharedPreferences("REAPrefs", MODE_PRIVATE) // for write and read preferences. To write: sharedPreferences.edit{putString("test", "abc") } to read: val token = sharedPreferences.getString("token", "")
         val token: String = sharedPreferences.getString("token", "").toString()
-        val serverURL = sharedPreferences.getString("serverURL", "").toString()
+        val serverApiURL = sharedPreferences.getString("serverApiURL", "").toString()
 
         // If token and ServerURL is set in preferences, go to DashboardActivity and skip login. Userdata will be checked in DashboardActivity
-        if(token != "" && serverURL != ""){
+        if(token != "" && serverApiURL != ""){
             Log.d("REA-StartActivity", "Token set in sharedPreferences, skipp login")
             val intent = Intent(this, MapActivity::class.java)
             startActivity(intent)

@@ -159,10 +159,8 @@ fun LoginScreen(
                                 val response = message.split(",")
                                 val status = response[0]
                                 val responseToken = response.getOrElse(2) { "" }
-
-                                Log.d("LoginScreen", "test 1 $serverApiURL $status")
                                 if (status == "success") {
-                                    Log.d("LoginScreen", "test 2 $serverApiURL")
+                                    Log.d("LoginScreen", "Login Success, Server API URL: $serverApiURL  and token = $responseToken")
                                     sharedPreferences.edit {
                                         putString("token", responseToken)
                                         putString("serverApiURL", serverApiURL)
