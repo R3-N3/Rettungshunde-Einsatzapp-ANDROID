@@ -1,6 +1,7 @@
 package com.rettungshundeEinsatzApp.activity
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -126,7 +127,7 @@ class MapActivity : ComponentActivity() {
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) {
-            requestPermissions()
+            showPermissionExplanationDialog()
         } else {
             startLocationService()
         }
@@ -210,6 +211,22 @@ class MapActivity : ComponentActivity() {
             ).show()
         }
     }
+
+    private fun showPermissionExplanationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Standortberechtigungen benötigt")
+            .setMessage(
+                "Diese App benötigt den Zugriff auf deinen Standort, auch im Hintergrund, " +
+                        "um deine Position während Sucheinsätzen kontinuierlich aufzuzeichnen. " +
+                        "So kann deine Rettungshundestaffel live mitverfolgen, welche Flächen bereits abgesucht wurden."
+            )
+            .setPositiveButton("Weiter") { _, _ -> requestPermissions() }
+            .setNegativeButton("Abbrechen") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+
+
 }
 
 

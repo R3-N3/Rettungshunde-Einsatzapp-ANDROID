@@ -5,6 +5,8 @@
     <string name="logout">Abmelden</string>
     <string name="security_level">Sicherheitslevel</string>
 
+    <string name="finish">Fertig</string>
+
     <string name="time">Zeit</string>
     <string name="unknown">Unbekannt</string>
 
@@ -88,6 +90,10 @@
     <string name="dialog_delete_all_areas_result">Alle Flächen vom Server erfolgreich gelöscht.</string>
     <string name="dialog_invalid_input">Ungültige Eingabe</string>
     <string name="dialog_invalid_input_or_error">Ungültige Eingabe oder Fehler</string>
+    <string name="dialog_edit_my_data_confirm_title">Daten speichern?</string>
+    <string name="dialog_edit_my_data_confirm_text">UBist du sicher, dass du die Änderungen speichern möchtest?</string>
+
+    <string name="edit_my_data_title">Meine Daten ändern</string>
 
     <string name="add_area">Fläche hinzufügen</string>
     <string name="area">Fläche</string>
@@ -122,7 +128,9 @@
     <string name="gps_tacking_running_text">Die App zeichnet den Standort im Hintergrund auf</string>
     <string name="change">Ändern</string>
     <string name="settings">Einstellungen</string>
+    <string name="error">Fehler</string>
     <string name="change_user_data_text">Nach Bestätigung wird der Benutzer entsprechend ihren Angaben geändert. Der Benutzer wird hierüber nicht automatisch benachrichtigt.</string>
+    <string name="change_my_user_data_info_text">Bitte beachten Sie: Nur Ihre E-Mail-Adresse, Telefonnummer und Track-Farbe können Sie selbst anpassen. Für Änderungen anderer Angaben wenden Sie sich bitte an den Administrator oder eine befugte Person.</string>
 
 
 

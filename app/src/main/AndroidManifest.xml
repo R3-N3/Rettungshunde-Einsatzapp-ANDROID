@@ -30,6 +30,7 @@
             android:exported="false" />
 
         <activity android:name=".activity.ManageUserSingleViewActivity" android:exported="false" />
+        <activity android:name=".activity.EditMyUserDataActivity" android:exported="false" />
         <activity android:name=".activity.LoginActivity" android:exported="false" />
         <activity android:name=".activity.ResetPasswordActivity" android:exported="false" />
         <activity android:name=".activity.ReportActivity" android:exported="false" />

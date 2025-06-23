@@ -36,10 +36,10 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.rettungshundeEinsatzApp"
+        applicationId = "com.RettungshundeEinsatzApp"
         minSdk = 31
         targetSdk = 35
-        versionCode = 36
+        versionCode = 60
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

@@ -125,6 +125,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("REAPrefs", MODE_PRIVATE)
+    val myTrackColor = sharedPreferences.getString("myTrackColor", "#FF0000FF") ?: "#FF0000FF"
     var gpsIsRunningPref by remember { mutableStateOf(sharedPreferences.getBoolean("gpsRunning", false)) }
     val token: String = sharedPreferences.getString("token", "").toString()
     val serverApiURL = sharedPreferences.getString("serverApiURL", "").toString()
@@ -452,7 +453,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             mySegments.forEach { segment ->
                                 val polyline = Polyline(map).apply {
                                     setPoints(segment)
-                                    outlinePaint.color = android.graphics.Color.BLUE
+                                    outlinePaint.color = myTrackColor.toColorInt()
                                     outlinePaint.strokeWidth = 6f
                                     outlinePaint.isAntiAlias = true
                                     isEnabled = true
@@ -471,8 +472,8 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                                 val accuracyCircle = Polygon().apply {
                                     points = Polygon.pointsAsCircle(lastPoint, myLastLocation.accuracy.toDouble())
-                                    fillPaint.color = android.graphics.Color.argb(50, 0, 0, 255)  // halbtransparentes Blau
-                                    outlinePaint.color = android.graphics.Color.argb(100, 0, 0, 255)
+                                    fillPaint.color = ("#" + "22" + myTrackColor.removePrefix("#").drop(2)).toColorInt()  // halbtransparente farbe bei 20% mit alphawert 33
+                                    outlinePaint.color = ("#" + "33" + myTrackColor.removePrefix("#").drop(2)).toColorInt()
                                     outlinePaint.strokeWidth = 2f
                                 }
 
@@ -488,7 +489,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                                     icon = getColoredVectorMarker(
                                         context,
                                         R.drawable.location_pin,
-                                        android.graphics.Color.BLUE
+                                        myTrackColor.toColorInt()
                                     )
                                     infoWindow = object : InfoWindow(R.layout.user_info_window, map) {
                                         @SuppressLint("SetTextI18n")
@@ -601,20 +602,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                                         isEnabled = !drawAreaMode
                                         position = GeoPoint(last.latitude, last.longitude)
                                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                                        /*
-                                        title = """
-                                        $nameText: ${user?.username ?: unknownText}
-                                        $radioCallNameText: ${user?.radiocallname ?: "-"}
-
-                                        $lastPointText:
-                                        ${formatLatitude(last.latitude)}
-                                        ${formatLongitude(last.longitude)}
-                                        $uTMMGRSText: ${locationToMGRSConverter.convert(last.latitude, last.longitude)}
-                                        $accuracyText: ${formatAccuracy(last.accuracy.toFloat())}
-                                        $timeText: ${last.timestamp}
-                                    """.trimIndent()
-
-                                         */
                                         icon = getColoredVectorMarker(context, R.drawable.location_pin, color)
 
                                             infoWindow = object : InfoWindow(R.layout.user_info_window, map) {
