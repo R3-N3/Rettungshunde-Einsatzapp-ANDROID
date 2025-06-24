@@ -39,7 +39,7 @@ android {
         applicationId = "com.RettungshundeEinsatzApp"
         minSdk = 31
         targetSdk = 35
-        versionCode = 60
+        versionCode = 62
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -61,7 +61,7 @@ android {
             isDebuggable = false // Nur Debug-Builds sollen debugfähig sein
 
             ndk {
-                debugSymbolLevel = "none" // Alternativ "FULL" für symbolisierte Abstürze in Crashlytics
+                debugSymbolLevel = "FULL" // Alternativ "FULL" für symbolisierte Abstürze in Crashlytics
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

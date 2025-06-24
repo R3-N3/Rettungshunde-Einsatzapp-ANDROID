@@ -144,6 +144,21 @@
     <string name="change_user_data_text">After confirmation, the user details will be changed according to their preferences. The user will not be automatically notified.</string>
     <string name="change_my_user_data_info_text">Please note: You can only edit your email address, phone number, and track color. For changes to any other information, please contact the administrator or an authorized person.</string>
 
+    <string name="location_permission_info_text">This app requires access to your location, including in the background, to continuously record your position during search operations. This allows your rescue dog team to track in real time which areas have already been searched.</string>
+    <string name="next">Next</string>
+    <string name="location_permission_info_title">Location Permissions Required</string>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

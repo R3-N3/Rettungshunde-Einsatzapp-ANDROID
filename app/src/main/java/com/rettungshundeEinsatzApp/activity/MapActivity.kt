@@ -214,14 +214,10 @@ class MapActivity : ComponentActivity() {
 
     private fun showPermissionExplanationDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Standortberechtigungen benötigt")
-            .setMessage(
-                "Diese App benötigt den Zugriff auf deinen Standort, auch im Hintergrund, " +
-                        "um deine Position während Sucheinsätzen kontinuierlich aufzuzeichnen. " +
-                        "So kann deine Rettungshundestaffel live mitverfolgen, welche Flächen bereits abgesucht wurden."
-            )
-            .setPositiveButton("Weiter") { _, _ -> requestPermissions() }
-            .setNegativeButton("Abbrechen") { dialog, _ -> dialog.dismiss() }
+            .setTitle(getString(R.string.location_permission_info_title))
+            .setMessage(getString(R.string.location_permission_info_text))
+            .setPositiveButton(getString(R.string.next)) { _, _ -> requestPermissions() }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
             .show()
     }
 

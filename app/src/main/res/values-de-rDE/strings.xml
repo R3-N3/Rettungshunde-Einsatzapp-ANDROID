@@ -132,6 +132,9 @@
     <string name="change_user_data_text">Nach Bestätigung wird der Benutzer entsprechend ihren Angaben geändert. Der Benutzer wird hierüber nicht automatisch benachrichtigt.</string>
     <string name="change_my_user_data_info_text">Bitte beachten Sie: Nur Ihre E-Mail-Adresse, Telefonnummer und Track-Farbe können Sie selbst anpassen. Für Änderungen anderer Angaben wenden Sie sich bitte an den Administrator oder eine befugte Person.</string>
 
+    <string name="location_permission_info_text">Diese App benötigt den Zugriff auf deinen Standort, auch im Hintergrund, um deine Position während Sucheinsätzen kontinuierlich aufzuzeichnen. So kann deine Rettungshundestaffel live mitverfolgen, welche Flächen bereits abgesucht wurden.</string>
+    <string name="location_permission_info_title">Standortberechtigungen benötigt</string>
+    <string name="next">Weiter</string>
 
 
 </resources>
