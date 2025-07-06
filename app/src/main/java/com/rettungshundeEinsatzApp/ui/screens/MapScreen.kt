@@ -80,9 +80,6 @@ import com.rettungshundeEinsatzApp.activity.ManageUsersOverviewActivity
 import com.rettungshundeEinsatzApp.activity.NewUserActivity
 import com.rettungshundeEinsatzApp.activity.SettingsActivity
 import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataProvider
-import com.rettungshundeEinsatzApp.database.areas.AreaDatabase
-import com.rettungshundeEinsatzApp.database.areas.SavedArea
-import com.rettungshundeEinsatzApp.database.areas.UploadStatus
 import com.rettungshundeEinsatzApp.functions.calculatePolygonArea
 import com.rettungshundeEinsatzApp.functions.deleteAllGPSData
 import com.rettungshundeEinsatzApp.functions.deleteMyGPSData
@@ -90,9 +87,6 @@ import com.rettungshundeEinsatzApp.functions.downloadAllGpsLocations
 import com.rettungshundeEinsatzApp.functions.downloadAllUserData
 import com.rettungshundeEinsatzApp.service.myLocation.MyLocationStatus
 import com.rettungshundeEinsatzApp.viewmodel.location.MapScreenAllTracksViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
@@ -102,9 +96,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.rettungshundeEinsatzApp.functions.deleteAllAreas
-import com.rettungshundeEinsatzApp.functions.downloadAreas
-import com.rettungshundeEinsatzApp.functions.uploadAreas
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.ScaleBarOverlay
 import org.osmdroid.views.overlay.infowindow.InfoWindow
@@ -117,7 +108,17 @@ import java.util.Date
 import java.util.Locale
 import androidx.core.content.edit
 import com.rettungshundeEinsatzApp.activity.ReportActivity
-import org.osmdroid.tileprovider.tilesource.XYTileSource
+import com.rettungshundeEinsatzApp.database.area.AreaCoordinateEntity
+import com.rettungshundeEinsatzApp.database.area.AreaDatabase
+import com.rettungshundeEinsatzApp.database.area.AreaEntity
+import com.rettungshundeEinsatzApp.functions.areas.ApiService
+import com.rettungshundeEinsatzApp.functions.areas.AreaRepository
+import com.rettungshundeEinsatzApp.functions.areas.AreaViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @SuppressLint("ClickableViewAccessibility")
 @Composable
@@ -147,18 +148,14 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val userDao = db.allUserDataDao()
     val mapCenteredOnce by viewModel.mapCenteredOnce
     val areaCornerMarkers = remember { mutableStateListOf<Marker>() }
-    val areaDatabase = AreaDatabase.getDatabase(context)
-    val areaDao = areaDatabase.areaDao()
     var areaName by remember { mutableStateOf("") }
+    var areaDescription by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf(Color.Red) }
     var dialogShowSaveArea by remember { mutableStateOf(false) }
     val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val lifecycleOwner = LocalLifecycleOwner.current
     val navBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-    val notUploadedAreas by areaDao.getByStatus(UploadStatus.NOT_UPLOADED)
-        .collectAsState(initial = emptyList())
-    val receivedAreas by areaDao.getByStatus(UploadStatus.RECEIVED)
-        .collectAsState(initial = emptyList())
+
     val dialogInfoAndConfirmTitle = when (dialogMod) {
         1 -> stringResource(id = R.string.dialog_delete_my_GPS_data_title)
         2 -> stringResource(id = R.string.dialog_delete_all_GPS_data_title)
@@ -171,6 +168,16 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
         3 -> stringResource(id = R.string.dialog_delete_all_areas_text)
         else -> stringResource(id = R.string.dialog_invalid_input)
     }
+    val areaDatabase = AreaDatabase.getDatabase(context)
+    val areaDao = areaDatabase.areaDao()
+    val retrofit = Retrofit.Builder()
+        .baseUrl(serverApiURL) // Stelle sicher, dass serverApiURL mit / endet
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val apiService = retrofit.create(ApiService::class.java)
+    val areaRepository = remember { AreaRepository(apiService, areaDao) }
+    val areaViewModel: AreaViewModel = viewModel(factory = AreaViewModel.Factory(areaDao))
+    val allAreas by areaViewModel.areas.collectAsState()
 
 
     val lastPointText = stringResource(id = R.string.last_point)
@@ -203,16 +210,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
             outlinePaint.strokeWidth = 4f
         }
     }
-
-
-    val openTopoMapSource = XYTileSource(
-        "OpenTopoMap",
-        1, 17,
-        256,
-        ".png",
-        arrayOf("https://tile.opentopomap.org/"),
-        "© OpenTopoMap (CC-BY-SA)"
-    )
 
     val configuration = LocalConfiguration.current
     val mapView = remember(configuration.orientation) {
@@ -344,6 +341,46 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                     // Clear map und crate new
                     map.overlays.clear()
 
+                    allAreas.forEach { areaWithCoords ->
+                        if (areaWithCoords.coordinates.isNotEmpty()) {
+                            val polygon = org.osmdroid.views.overlay.Polygon(map).apply {
+                                val geoPoints = areaWithCoords.coordinates.sortedBy { it.orderIndex }
+                                    .map { coord -> org.osmdroid.util.GeoPoint(coord.latitude, coord.longitude) }
+
+                                setPoints(geoPoints)
+
+                                try {
+                                    val baseColor = android.graphics.Color.parseColor(areaWithCoords.area.color)
+
+                                    // 🟢 Setze Füllfarbe mit 30% Transparenz
+                                    fillPaint.color = android.graphics.Color.argb(
+                                        (0.3f * 255).toInt(),
+                                        android.graphics.Color.red(baseColor),
+                                        android.graphics.Color.green(baseColor),
+                                        android.graphics.Color.blue(baseColor)
+                                    )
+
+                                    // 🟢 Setze Outline mit 70% Transparenz
+                                    outlinePaint.color = android.graphics.Color.argb(
+                                        (0.7f * 255).toInt(),
+                                        android.graphics.Color.red(baseColor),
+                                        android.graphics.Color.green(baseColor),
+                                        android.graphics.Color.blue(baseColor)
+                                    )
+
+                                } catch (e: Exception) {
+                                    // fallback falls color string fehlerhaft ist
+                                    fillPaint.color = android.graphics.Color.argb(80, 255, 0, 0) // rot, 30%
+                                    outlinePaint.color = android.graphics.Color.argb(180, 255, 0, 0) // rot, 70%
+                                }
+
+                                outlinePaint.strokeWidth = 3f
+                                isEnabled = true
+                            }
+                            map.overlays.add(polygon)
+                        }
+                    }
+
                     // Area and marker save, if in DrawMode
                     val areaElements = if (drawAreaMode) {
                         (listOf(areaPolygon) + areaCornerMarkers)
@@ -354,62 +391,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                         map.overlays.addAll(areaElements)
                     }
 
-                    receivedAreas.forEach { savedArea ->
-                        val points = savedArea.points.split(";").mapNotNull {
-                            val latLon = it.split(",")
-                            if (latLon.size == 2) {
-                                val lat = latLon[0].toDoubleOrNull()
-                                val lon = latLon[1].toDoubleOrNull()
-                                if (lat != null && lon != null) GeoPoint(lat, lon) else null
-                            } else null
-                        }
 
-                        if (points.size >= 3) {
-                            // Get color from String
-                            val outlineColor = try {
-                                savedArea.color.toColorInt()
-                            } catch (e: Exception) {
-                                android.graphics.Color.GRAY
-                            }
-
-                            val fillColor = colorWithAlpha(outlineColor, 30)
-                            val areaM2 = calculatePolygonArea(points)
-                            val polygon = Polygon(map).apply {
-                                setPoints(points)
-                                fillPaint.color = fillColor
-                                outlinePaint.color = outlineColor
-                                outlinePaint.strokeWidth = 4f
-                                isEnabled = true
-                                isVisible = true
-                                infoWindow = null
-                                infoWindow = object : InfoWindow(R.layout.area_info_window, map) {
-                                    override fun onOpen(item: Any?) {
-                                        val view = mView
-                                        val areaNameText =
-                                            view.findViewById<TextView>(R.id.area_title)
-                                        areaNameText.text = savedArea.name
-                                        val description = context.getString(R.string.area_description, areaM2)
-                                        val areaDescriptionText =
-                                            view.findViewById<TextView>(R.id.area_description)
-                                        areaDescriptionText.text = description
-                                    }
-
-                                    override fun onClose() {
-                                    }
-                                }
-                                setOnClickListener { _, _, _ ->
-                                    if (this.infoWindow?.isOpen == true) {
-                                        this.closeInfoWindow()
-                                    } else {
-                                        InfoWindow.closeAllInfoWindowsOn(mapView)
-                                        this.showInfoWindow()
-                                    }
-                                    true
-                                }
-                            }
-                            map.overlays.add(polygon)
-                        }
-                    }
 
                     map.invalidate()
 
@@ -641,75 +623,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                                     map.overlays.add(marker)
                                 }
                             }
-
-                            notUploadedAreas.forEach { savedArea ->
-                                val points = savedArea.points.split(";").mapNotNull {
-                                    val latLon = it.split(",")
-                                    if (latLon.size == 2) {
-                                        val lat = latLon[0].toDoubleOrNull()
-                                        val lon = latLon[1].toDoubleOrNull()
-                                        if (lat != null && lon != null) GeoPoint(lat, lon) else null
-                                    } else null
-                                }
-
-                                if (points.size >= 3) {
-                                    // Get Color from String
-                                    val outlineColor = try {
-                                        savedArea.color.toColorInt()
-                                    } catch (e: Exception) {
-                                        android.graphics.Color.GRAY
-                                    }
-
-                                    val fillColor = colorWithAlpha(outlineColor, 30)
-                                    val areaM2 = calculatePolygonArea(points)
-                                    val polygon = Polygon(map).apply {
-                                        setPoints(points)
-                                        fillPaint.color = fillColor
-                                        outlinePaint.color = outlineColor
-                                        outlinePaint.strokeWidth = 4f
-                                        isEnabled = true
-                                        isVisible = true
-                                        infoWindow = null
-                                        infoWindow = object : InfoWindow(R.layout.area_info_window, map) {
-                                            override fun onOpen(item: Any?) {
-                                                val view = mView
-                                                val areaNameText =
-                                                    view.findViewById<TextView>(R.id.area_title)
-                                                areaNameText.text = savedArea.name
-                                                val description = context.getString(R.string.area_description, areaM2)
-                                                val areaDescriptionText =
-                                                    view.findViewById<TextView>(R.id.area_description)
-                                                areaDescriptionText.text = description
-                                            }
-
-                                            override fun onClose() {
-                                            }
-                                        }
-                                        setOnClickListener { _, _, _ ->
-                                            if (this.infoWindow?.isOpen == true) {
-                                                this.closeInfoWindow()
-                                            } else {
-                                                InfoWindow.closeAllInfoWindowsOn(mapView)
-                                                this.showInfoWindow()
-                                            }
-                                            true
-                                        }
-                                    }
-
-                                    val centerPoint = getPolygonCenter(points)
-                                    val centerMarker = Marker(mapView).apply {
-                                        position = centerPoint
-                                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-                                        icon = AppCompatResources.getDrawable(context, R.drawable.red_cross)
-                                        isDraggable = false
-                                        isEnabled = true
-                                        infoWindow = null
-                                    }
-
-                                    map.overlays.add(polygon)
-                                    map.overlays.add(centerMarker)
-                                }
-                            }
                         }
 
                         // Center to my position
@@ -826,6 +739,18 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             viewModel.resetCentering()
                             if (securityLevel > 1) {
 
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    // 1. Upload durchführen
+                                    val (uploadSuccess, uploadMessage) = areaRepository.uploadAreas(token)
+
+                                    if (uploadSuccess) {
+                                        areaRepository.downloadAreas(token)
+                                    } else {
+                                        Log.e("Sync", "Upload fehlgeschlagen: $uploadMessage")
+                                    }
+                                }
+
+
                                 // Get All user Data to Refresh Database
                                 downloadAllUserData(token, serverApiURL, db.allUserDataDao()) { msg ->
                                     val parts = msg.split(",")
@@ -847,44 +772,13 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                                     }
                                 }
 
-                                // Push not uploaded Areas to server
-                                uploadAreas(token, serverApiURL, areaDao) { msg ->
-                                    val parts = msg.split(",")
-                                    Log.d(
-                                        "MapScreen",
-                                        "Refresh Button pushed: PushAreas: status=${parts[0]}, message=${parts[1]}"
-                                    )
-
-                                    // Get uploaded Areas from server
-                                    downloadAreas(token, serverApiURL, areaDao) { msg2 ->
-                                        val parts2 = msg2.split(",")
-                                        Log.d(
-                                            "MapScreen",
-                                            "Refresh Button pushed: GetAreas: status=${parts2[0]}, message=${parts2[1]}"
-                                        )
-                                    }
-                                }
-
                             }else{
-                                // Push not uploaded Areas to server
-                                uploadAreas(token, serverApiURL, areaDao) { msg ->
-                                    val parts = msg.split(",")
-                                    Log.d(
-                                        "MapScreen",
-                                        "Refresh Button pushed: PushAreas: status=${parts[0]}, message=${parts[1]}"
-                                    )
 
-                                    // Get uploaded Areas from server
-                                    downloadAreas(token, serverApiURL, areaDao) { msg2 ->
-                                        val parts2 = msg2.split(",")
-                                        Log.d(
-                                            "MapScreen",
-                                            "Refresh Button pushed: GetAreas: status=${parts2[0]}, message=${parts2[1]}"
-                                        )
-
-                                    }
-
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    val (success, message) = areaRepository.downloadAreas(token)
+                                    Log.d("MapScreen", "Download Areas: success=$success, message=$message")
                                 }
+
                             }
                         }
                     ) {
@@ -1320,12 +1214,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                                 dialogIsSubmitting = true
                                 dialogIsSubmitting = false
                                 dialogShowResult = true
-                                deleteAllAreas(token, serverApiURL, areaDao) { success, message ->
-                                    resultMessage = message
-                                    resultSuccess = success
-                                    dialogIsSubmitting = false
-                                    dialogShowResult = true
-                                }
+
                             }
 
                             else -> {
@@ -1413,23 +1302,45 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                 onDismissRequest = { dialogShowSaveArea = false },
                 confirmButton = {
                     TextButton(onClick = {
+
                         val jsonPoints = areaPoints.joinToString(separator = ";") {
                             "${it.latitude},${it.longitude}"
                         }
                         val colorHex = String.format("#%06X", 0xFFFFFF and selectedColor.toArgb())
 
+                        Log.d("insertArea", "areaPoints size before save: ${areaPoints.size}")
+
                         CoroutineScope(Dispatchers.IO).launch {
-                            val newArea = SavedArea(
-                                name = areaName.ifBlank { "Unnamed"},
-                                timestamp = System.currentTimeMillis(),
-                                points = jsonPoints,
-                                color = colorHex,
-                                uploadStatus = UploadStatus.NOT_UPLOADED
+                            Log.d("MapScreen", "Start Coroutine to Save Area")
+                            val areaId = areaDao.insertArea(
+                                AreaEntity(
+                                    title = areaName.ifBlank { "Unbenannt" },
+                                    desc = areaDescription.ifBlank { "" },  // <-- neue Beschreibung speichern
+                                    color = colorHex,
+                                    uploadedToServer = false
+                                )
                             )
-                            areaDao.insert(newArea)
+
+                            val coords = areaPoints.mapIndexed { index, point ->
+                                AreaCoordinateEntity(
+                                    latitude = point.latitude,
+                                    longitude = point.longitude,
+                                    orderIndex = index,
+                                    areaId = areaId.toInt()
+                                )
+                            }
+
+                            Log.d("insertArea", "Coords to insert:")
+                            coords.forEachIndexed { index, coord ->
+                                Log.d("insertArea", "🔹 $index: lat=${coord.latitude}, lon=${coord.longitude}, orderIndex=${coord.orderIndex}, areaId=${coord.areaId}")
+                            }
+
+                            areaDao.insertCoordinates(coords)
+                            areaPoints.clear()
+                            Log.d("MapScreen", "End Coroutine to Save Area")
                         }
 
-                        areaPoints.clear()
+                        //areaPoints.clear()
                         areaPolygon.setPoints(emptyList())
                         areaCornerMarkers.forEach { mapView.overlays.remove(it) }
                         areaCornerMarkers.clear()
@@ -1437,6 +1348,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                         dialogShowSaveArea = false
                         areaName = ""
+                        areaDescription = ""
                         selectedColor = Color.Red
                         drawAreaMode = false
                     }) {
@@ -1455,6 +1367,13 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             value = areaName,
                             onValueChange = { areaName = it },
                             label = { Text(stringResource(id = R.string.name_of_area)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        OutlinedTextField(
+                            value = areaDescription,
+                            onValueChange = { areaDescription = it },
+                            label = { Text("Beschreibung der Fläche") },
                             modifier = Modifier.fillMaxWidth()
                         )
 
@@ -1507,17 +1426,4 @@ fun getColoredVectorMarker(context: Context, drawableRes: Int, color: Int): Draw
     val wrapped = DrawableCompat.wrap(drawable).mutate()
     DrawableCompat.setTint(wrapped, color)
     return wrapped
-}
-
-fun colorWithAlpha(color: Int, alpha: Int): Int {
-    val r = android.graphics.Color.red(color)
-    val g = android.graphics.Color.green(color)
-    val b = android.graphics.Color.blue(color)
-    return android.graphics.Color.argb(alpha, r, g, b)
-}
-
-fun getPolygonCenter(points: List<GeoPoint>): GeoPoint {
-    val lat = points.map { it.latitude }.average()
-    val lon = points.map { it.longitude }.average()
-    return GeoPoint(lat, lon)
 }

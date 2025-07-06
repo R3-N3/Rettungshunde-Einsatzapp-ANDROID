@@ -33,12 +33,12 @@ android {
         }
     }
     namespace = "com.rettungshundeEinsatzApp"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.RettungshundeEinsatzApp"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 62
         versionName = "1.0.0"
 

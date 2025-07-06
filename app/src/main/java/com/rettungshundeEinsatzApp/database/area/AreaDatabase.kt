@@ -1,18 +1,17 @@
-package com.rettungshundeEinsatzApp.database.areas
+package com.rettungshundeEinsatzApp.database.area
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 
-@Database(entities = [SavedArea::class], version = 2)
-@TypeConverters(UploadStatusConverter::class)
+@Database(entities = [AreaEntity::class, AreaCoordinateEntity::class], version = 1)
 abstract class AreaDatabase : RoomDatabase() {
     abstract fun areaDao(): AreaDao
 
     companion object {
-        @Volatile private var INSTANCE: AreaDatabase? = null
+        @Volatile
+        private var INSTANCE: AreaDatabase? = null
 
         fun getDatabase(context: Context): AreaDatabase {
             return INSTANCE ?: synchronized(this) {
@@ -20,8 +19,7 @@ abstract class AreaDatabase : RoomDatabase() {
                     context.applicationContext,
                     AreaDatabase::class.java,
                     "area_database"
-                )
-                    .build()
+                ).build()
                 INSTANCE = instance
                 instance
             }

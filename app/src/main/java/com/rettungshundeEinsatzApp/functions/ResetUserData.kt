@@ -7,7 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.content.Context
 import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataProvider
-import com.rettungshundeEinsatzApp.database.areas.AreaDatabase
 
 fun resetUserData(context: Context) {
     val sharedPreferences = context.getSharedPreferences("REAPrefs", Context.MODE_PRIVATE)
@@ -29,8 +28,8 @@ fun resetUserData(context: Context) {
         val dbUserData = AllUserDataProvider.getDatabase(context)
         dbUserData.allUserDataDao().deleteAll()
 
-        val areaDatabase = AreaDatabase.getDatabase(context)
-        areaDatabase.areaDao().deleteAll()
+     /*   val areaDatabase = AreaDatabase.getDatabase(context)
+        areaDatabase.areaDao().deleteAll()*/
 
         val allLocationDatabase = AllUserDataProvider.getDatabase(context)
         allLocationDatabase.allUsersLocationsDao().deleteAll()

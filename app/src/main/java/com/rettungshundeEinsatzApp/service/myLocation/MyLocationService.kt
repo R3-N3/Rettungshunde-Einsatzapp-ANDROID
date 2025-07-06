@@ -71,7 +71,8 @@ class MyLocationService : Service() {
         super.onCreate()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000) // 5 Sek
-            .setMinUpdateIntervalMillis(2500)
+            .setMinUpdateIntervalMillis(5000)
+            .setMinUpdateDistanceMeters(5.0f)
             //.setMaxUpdateDelayMillis(45000)
             .setGranularity(Granularity.GRANULARITY_FINE)
             .build()
