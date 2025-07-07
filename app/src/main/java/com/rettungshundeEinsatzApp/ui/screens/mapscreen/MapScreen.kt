@@ -1,4 +1,4 @@
-package com.rettungshundeEinsatzApp.ui.screens
+package com.rettungshundeEinsatzApp.ui.screens.mapscreen
 
 import android.annotation.SuppressLint
 import android.app.Service.MODE_PRIVATE
@@ -8,8 +8,6 @@ import android.content.SharedPreferences
 import androidx.compose.ui.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.Log
-import android.view.MotionEvent
-import android.widget.TextView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +16,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,14 +24,10 @@ import com.rettungshundeEinsatzApp.database.mylocallocation.MyLocationDatabase
 import com.rettungshundeEinsatzApp.service.myLocation.MyLocationLatLongToMGRS
 import com.rettungshundeEinsatzApp.ui.ReaAppTheme
 import com.rettungshundeEinsatzApp.viewmodel.mapscreen.MapScreenMyTrackViewModel
-import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.Polyline
-import java.io.File
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -57,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.border
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
@@ -71,9 +63,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Texture
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rettungshundeEinsatzApp.activity.ContactActivity
 import com.rettungshundeEinsatzApp.activity.ManageUsersOverviewActivity
@@ -88,6 +78,7 @@ import com.rettungshundeEinsatzApp.functions.downloadAllUserData
 import com.rettungshundeEinsatzApp.service.myLocation.MyLocationStatus
 import com.rettungshundeEinsatzApp.viewmodel.location.MapScreenAllTracksViewModel
 import androidx.compose.foundation.clickable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
@@ -95,14 +86,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.ScaleBarOverlay
-import org.osmdroid.views.overlay.infowindow.InfoWindow
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.Lifecycle
 import androidx.core.net.toUri
-import org.osmdroid.util.BoundingBox
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -119,6 +105,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.math.abs
 
 @SuppressLint("ClickableViewAccessibility")
 @Composable
@@ -148,12 +135,11 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val userDao = db.allUserDataDao()
     val mapCenteredOnce by viewModel.mapCenteredOnce
     val areaCornerMarkers = remember { mutableStateListOf<Marker>() }
-    var areaName by remember { mutableStateOf("") }
+    var areaName by rememberSaveable { mutableStateOf("") }
     var areaDescription by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf(Color.Red) }
     var dialogShowSaveArea by remember { mutableStateOf(false) }
     val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val lifecycleOwner = LocalLifecycleOwner.current
     val navBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     val dialogInfoAndConfirmTitle = when (dialogMod) {
@@ -178,8 +164,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val areaRepository = remember { AreaRepository(apiService, areaDao) }
     val areaViewModel: AreaViewModel = viewModel(factory = AreaViewModel.Factory(areaDao))
     val allAreas by areaViewModel.areas.collectAsState()
-
-
     val lastPointText = stringResource(id = R.string.last_point)
     val radioCallNameText = stringResource(id = R.string.radio_call_name)
     val accuracyText = stringResource(id = R.string.accuracy)
@@ -187,18 +171,11 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val timeText = stringResource(id = R.string.time)
     val unknownText = stringResource(id = R.string.unknown)
     val oSMCopyright = stringResource(id = R.string.osm_copyright)
-
-
-
-
     val viewModelAllTracks: MapScreenAllTracksViewModel = viewModel(
         factory = MapScreenAllTracksViewModel.Factory(locationDao, userDao)
     )
-
     val allLocations by viewModelAllTracks.allLocations.collectAsState()
     val allUsers by viewModelAllTracks.allUsers.collectAsState()
-
-
     val myGeoPoints = myLocations.map { GeoPoint(it.latitude, it.longitude) }
     val gpsActive by MyLocationStatus.gpsActive.collectAsStateWithLifecycle()
     var drawAreaMode by remember { mutableStateOf(false) }
@@ -211,39 +188,19 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
         }
     }
 
-    val configuration = LocalConfiguration.current
-    val mapView = remember(configuration.orientation) {
+    val timeDiffMillis = (1 * 60 * 1000).toLong()
+    val distanceMeters = 100.0
+    val dummyMapView = remember {
         MapView(context).apply {
             setTileSource(TileSourceFactory.MAPNIK)
-            minZoomLevel = 6.0
-            maxZoomLevel = 19.0
-            controller.setZoom(12.0)
-            controller.setCenter(GeoPoint(50.69, 7.128))
-            setMultiTouchControls(true)
-            zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-            onResume()
         }
     }
-
-    Configuration.getInstance().userAgentValue = context.packageName
-    Configuration.getInstance().tileFileSystemCacheMaxBytes = 1024L * 1024L * 100 // 100 MB
-    Configuration.getInstance().osmdroidBasePath = File(context.filesDir, "osmdroid")
-    Configuration.getInstance().osmdroidTileCache = File(context.filesDir, "osmdroid/tiles")
-    Configuration.getInstance().tileDownloadThreads = 2
-    Configuration.getInstance().tileFileSystemThreads = 2
-    Configuration.getInstance().cacheMapTileCount = 400
-
-    var menuVisible by remember { mutableStateOf(false) }
-    BackHandler(enabled = menuVisible) {
-        menuVisible = false
-    }
-
     val statusBarPaddingPx = with(LocalDensity.current) {
         WindowInsets.statusBars.asPaddingValues().calculateTopPadding().toPx()
     }
 
     val scaleBarOverlay = remember(statusBarPaddingPx) {
-        ScaleBarOverlay(mapView).apply {
+        ScaleBarOverlay(dummyMapView).apply {
             isEnabled = true
             setAlignBottom(false)
             setAlignRight(false)
@@ -253,6 +210,12 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
             textPaint.color = android.graphics.Color.BLACK
             textPaint.textSize = 35f
         }
+    }
+
+
+    var menuVisible by remember { mutableStateOf(false) }
+    BackHandler(enabled = menuVisible) {
+        menuVisible = false
     }
 
     val annotatedLinkText = buildAnnotatedString {
@@ -269,9 +232,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
         pop()
     }
 
-    val timeDiffMillis = 1 * 60 * 1000 // 1 minutes
-    val distanceMeters = 100.0
-
     DisposableEffect(Unit) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == "gpsRunning") {
@@ -286,10 +246,64 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
         }
     }
 
-
-
     ReaAppTheme {
         Box(modifier = Modifier.fillMaxSize()) {
+
+            MapViewContainer(
+                modifier = Modifier.fillMaxSize(),
+
+                // 👉 Deine Standortdaten
+                myLocations = myLocations,
+                myGeoPoints = myLocations.map { GeoPoint(it.latitude, it.longitude) },
+
+                // 👉 Alle User-Standortdaten
+                allLocations = allLocations,
+                allUsers = allUsers,
+
+                // 👉 Deine Flächen (Areas)
+                allAreas = allAreas,
+
+                // 👉 Farbe deines Tracks
+                myTrackColor = myTrackColor,
+
+                // 👉 States & Flags
+                drawAreaMode = drawAreaMode,
+                mapCenteredOnce = mapCenteredOnce,
+
+                // 👉 Funktionen
+                markAsCentered = { viewModel.markAsCentered() },
+
+                // 👉 Area-Editing-States
+                areaPoints = areaPoints,
+                areaPolygon = areaPolygon,
+                areaCornerMarkers = areaCornerMarkers,
+
+                // 👉 Security Level
+                securityLevel = securityLevel,
+
+                // 👉 User Informationen
+                myUserName = myUserName,
+                radioCallName = radioCallName,
+
+                // 👉 Format Strings & Converter
+                lastPointText = lastPointText,
+                radioCallNameText = radioCallNameText,
+                accuracyText = accuracyText,
+                uTMMGRSText = uTMMGRSText,
+                timeText = timeText,
+                unknownText = unknownText,
+
+                locationToMGRSConverter = locationToMGRSConverter,
+
+                // 👉 Map scale overlay
+                scaleBarOverlay = scaleBarOverlay,
+
+                // 👉 Time & distance threshold
+                timeDiffMillis = timeDiffMillis,
+                distanceMeters = distanceMeters,
+
+                onToggleDrawAreaMode = { drawAreaMode = !drawAreaMode }
+            )
 
             // background for statusBar
             Box(
@@ -331,378 +345,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                 color = Color.Black
             )
 
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { mapView },
-                update = { map ->
-
-                    Log.d("MapScreen", "Update")
-
-                    // Clear map und crate new
-                    map.overlays.clear()
-
-                    allAreas.forEach { areaWithCoords ->
-                        if (areaWithCoords.coordinates.isNotEmpty()) {
-                            val polygon = org.osmdroid.views.overlay.Polygon(map).apply {
-                                val geoPoints = areaWithCoords.coordinates.sortedBy { it.orderIndex }
-                                    .map { coord -> org.osmdroid.util.GeoPoint(coord.latitude, coord.longitude) }
-
-                                setPoints(geoPoints)
-
-                                try {
-                                    val baseColor = android.graphics.Color.parseColor(areaWithCoords.area.color)
-
-                                    // 🟢 Setze Füllfarbe mit 30% Transparenz
-                                    fillPaint.color = android.graphics.Color.argb(
-                                        (0.3f * 255).toInt(),
-                                        android.graphics.Color.red(baseColor),
-                                        android.graphics.Color.green(baseColor),
-                                        android.graphics.Color.blue(baseColor)
-                                    )
-
-                                    // 🟢 Setze Outline mit 70% Transparenz
-                                    outlinePaint.color = android.graphics.Color.argb(
-                                        (0.7f * 255).toInt(),
-                                        android.graphics.Color.red(baseColor),
-                                        android.graphics.Color.green(baseColor),
-                                        android.graphics.Color.blue(baseColor)
-                                    )
-
-                                } catch (e: Exception) {
-                                    // fallback falls color string fehlerhaft ist
-                                    fillPaint.color = android.graphics.Color.argb(80, 255, 0, 0) // rot, 30%
-                                    outlinePaint.color = android.graphics.Color.argb(180, 255, 0, 0) // rot, 70%
-                                }
-
-                                outlinePaint.strokeWidth = 3f
-                                isEnabled = true
-                            }
-                            map.overlays.add(polygon)
-                        }
-                    }
-
-                    // Area and marker save, if in DrawMode
-                    val areaElements = if (drawAreaMode) {
-                        (listOf(areaPolygon) + areaCornerMarkers)
-                    } else emptyList()
-
-                    // Add area and marker if drawAreaMode true
-                    if (drawAreaMode) {
-                        map.overlays.addAll(areaElements)
-                    }
-
-
-
-                    map.invalidate()
-
-                    if (!drawAreaMode) {
-
-                        // My Track with Segmentation
-                        val mySegments = mutableListOf<List<GeoPoint>>()
-                        if (myLocations.size > 1) {
-                            var currentSegment = mutableListOf<GeoPoint>()
-                            var lastLocation = myLocations.first()
-                            var lastPoint = GeoPoint(lastLocation.latitude, lastLocation.longitude)
-                            currentSegment.add(lastPoint)
-
-                            for (i in 1 until myLocations.size) {
-                                val location = myLocations[i]
-                                val currentPoint = GeoPoint(location.latitude, location.longitude)
-
-                                val timeDiff = location.timestamp - lastLocation.timestamp
-                                val distance = lastPoint.distanceToAsDouble(currentPoint)
-
-                                if (timeDiff > timeDiffMillis || distance > distanceMeters) {
-                                    // new section
-                                    if (currentSegment.size > 1) {
-                                        mySegments.add(currentSegment)
-                                    }
-                                    currentSegment = mutableListOf(currentPoint)
-                                } else {
-                                    currentSegment.add(currentPoint)
-                                }
-
-                                lastPoint = currentPoint
-                                lastLocation = location
-                            }
-
-                            // add last section
-                            if (currentSegment.size > 1) {
-                                mySegments.add(currentSegment)
-                            }
-
-                            // draw all sections
-                            mySegments.forEach { segment ->
-                                val polyline = Polyline(map).apply {
-                                    setPoints(segment)
-                                    outlinePaint.color = myTrackColor.toColorInt()
-                                    outlinePaint.strokeWidth = 6f
-                                    outlinePaint.isAntiAlias = true
-                                    isEnabled = true
-                                    infoWindow = null
-                                }
-                                map.overlays.add(polyline)
-                            }
-                        }
-
-                        // Marker at last point of my track
-                        if (myGeoPoints.isNotEmpty()) {
-                            val lastPoint = myGeoPoints.last()
-                            val myLastLocation = myLocations.lastOrNull()
-
-                            if (myLastLocation != null) {
-
-                                val accuracyCircle = Polygon().apply {
-                                    points = Polygon.pointsAsCircle(lastPoint, myLastLocation.accuracy.toDouble())
-                                    fillPaint.color = ("#" + "22" + myTrackColor.removePrefix("#").drop(2)).toColorInt()  // halbtransparente farbe bei 20% mit alphawert 33
-                                    outlinePaint.color = ("#" + "33" + myTrackColor.removePrefix("#").drop(2)).toColorInt()
-                                    outlinePaint.strokeWidth = 2f
-                                }
-
-                                map.overlays.add(accuracyCircle)
-
-                                val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault())
-                                val timeString = dateFormat.format(Date(myLastLocation.timestamp))
-
-                                val marker = Marker(map).apply {
-                                    isEnabled = !drawAreaMode
-                                    position = lastPoint
-                                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                                    icon = getColoredVectorMarker(
-                                        context,
-                                        R.drawable.location_pin,
-                                        myTrackColor.toColorInt()
-                                    )
-                                    infoWindow = object : InfoWindow(R.layout.user_info_window, map) {
-                                        @SuppressLint("SetTextI18n")
-                                        override fun onOpen(item: Any?) {
-                                            val view = mView
-                                            val areaNameText =
-                                                view.findViewById<TextView>(R.id.user_info_title)
-                                            areaNameText.text = myUserName
-                                            val areaDescriptionText =
-                                                view.findViewById<TextView>(R.id.user_info_description)
-                                            areaDescriptionText.text = """
-                                                $radioCallNameText: $radioCallName
-                                                
-                                                $lastPointText:
-                                                ${formatLatitude(myLastLocation.latitude)}
-                                                ${formatLongitude(myLastLocation.longitude)}
-                                                $uTMMGRSText: ${locationToMGRSConverter.convert(lastPoint.latitude, lastPoint.longitude)}  
-                                                $accuracyText: ${formatAccuracy(myLastLocation.accuracy)}
-                                                $timeText: $timeString
-                                            """.trimIndent()
-                                        }
-
-                                        override fun onClose() {
-                                        }
-                                    }
-                                    setOnMarkerClickListener { marker, mapView ->
-                                        if (marker.infoWindow?.isOpen == true) {
-                                            marker.closeInfoWindow()
-                                        } else {
-                                            InfoWindow.closeAllInfoWindowsOn(mapView)
-                                            marker.showInfoWindow()
-                                        }
-                                        true
-                                    }
-
-
-                                }
-                                map.overlays.add(marker)
-
-                            }
-                        }
-
-                        // Polyline for all user tracks without own track and marker, cut lines with time or distance differences
-                        if (securityLevel > 1) {
-                            val grouped = allLocations.groupBy { it.userId }
-
-                            grouped.forEach { (userId, locations) ->
-                                if (locations.size > 1) {
-                                    val user = allUsers.find { it.id == userId }
-                                    val color = try {
-                                        user?.trackColor?.toColorInt() ?: android.graphics.Color.GRAY
-                                    } catch (e: Exception) {
-                                        android.graphics.Color.GRAY
-                                    }
-
-                                    val segments = mutableListOf<List<GeoPoint>>()
-                                    var currentSegment = mutableListOf<GeoPoint>()
-                                    var lastTimestamp = locations.first().timestamp
-                                    var lastPoint = GeoPoint(locations.first().latitude, locations.first().longitude)
-                                    currentSegment.add(lastPoint)
-
-                                    for (i in 1 until locations.size) {
-                                        val location = locations[i]
-                                        val currentPoint = GeoPoint(location.latitude, location.longitude)
-                                        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                                        val currentDate = formatter.parse(location.timestamp)
-                                        val lastDate = formatter.parse(lastTimestamp)
-                                        val timeDiff = if (currentDate != null && lastDate != null) {
-                                            currentDate.time - lastDate.time
-                                        } else {
-                                            Log.d("MapScreen","Error while time diff")
-                                            0L
-                                        }
-                                        val distance = lastPoint.distanceToAsDouble(currentPoint)
-
-                                        if (timeDiff > timeDiffMillis || distance > distanceMeters) {
-                                            // Start a new segment
-                                            if (currentSegment.size > 1) {
-                                                segments.add(currentSegment)
-                                            }
-                                            currentSegment = mutableListOf(currentPoint)
-                                        } else {
-                                            currentSegment.add(currentPoint)
-                                        }
-
-                                        lastPoint = currentPoint
-                                        lastTimestamp = location.timestamp
-                                    }
-                                    // Add last segment
-                                    if (currentSegment.size > 1) {
-                                        segments.add(currentSegment)
-                                    }
-
-                                    // Draw segments
-                                    segments.forEach { segment ->
-                                        val polyline = Polyline(map).apply {
-                                            setPoints(segment)
-                                            outlinePaint.color = color
-                                            outlinePaint.strokeWidth = 5f
-                                            isVisible = !drawAreaMode
-                                            isEnabled = !drawAreaMode
-                                            infoWindow = null
-                                        }
-                                        map.overlays.add(polyline)
-                                    }
-
-                                    // Marker for the last point in the full track
-                                    val last = locations.last()
-                                    val marker = Marker(map).apply {
-                                        isEnabled = !drawAreaMode
-                                        position = GeoPoint(last.latitude, last.longitude)
-                                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                                        icon = getColoredVectorMarker(context, R.drawable.location_pin, color)
-
-                                            infoWindow = object : InfoWindow(R.layout.user_info_window, map) {
-                                                @SuppressLint("SetTextI18n")
-                                                override fun onOpen(item: Any?) {
-                                                    val view = mView
-                                                    val areaNameText =
-                                                        view.findViewById<TextView>(R.id.user_info_title)
-                                                    areaNameText.text = user?.username ?: unknownText
-                                                    val areaDescriptionText =
-                                                        view.findViewById<TextView>(R.id.user_info_description)
-                                                    areaDescriptionText.text = """
-                                                        $radioCallNameText: ${user?.radiocallname ?: "-"}
-                                                        
-                                                        $lastPointText:
-                                                        ${formatLatitude(last.latitude)}
-                                                        ${formatLongitude(last.longitude)}
-                                                        $uTMMGRSText: ${locationToMGRSConverter.convert(last.latitude, last.longitude)}
-                                                        $accuracyText: ${formatAccuracy(last.accuracy.toFloat())}
-                                                        $timeText: ${last.timestamp}
-                                                    """.trimIndent()
-                                                }
-
-                                                override fun onClose() {
-                                                }
-                                            }
-                                            setOnMarkerClickListener { marker, mapView ->
-                                                if (marker.infoWindow?.isOpen == true) {
-                                                    marker.closeInfoWindow()
-                                                } else {
-                                                    InfoWindow.closeAllInfoWindowsOn(mapView)
-                                                    marker.showInfoWindow()
-                                                }
-                                                true
-                                            }
-                                    }
-                                    map.overlays.add(marker)
-                                }
-                            }
-                        }
-
-                        // Center to my position
-                        if (!mapCenteredOnce && map.width > 0 && map.height > 0) {
-                            val allPoints = (myGeoPoints + allLocations.map { GeoPoint(it.latitude, it.longitude) })
-                            if (allPoints.isNotEmpty()) {
-                                val boundingBox = BoundingBox.fromGeoPointsSafe(allPoints)
-                                map.zoomToBoundingBox(boundingBox, true, 100)
-                                viewModel.markAsCentered()
-                            }
-
-                        }
-
-                    }
-
-                    map.setOnTouchListener { _, event ->
-                        if (event.action == MotionEvent.ACTION_DOWN) {
-                            InfoWindow.closeAllInfoWindowsOn(mapView)
-                        }
-
-
-                        if (drawAreaMode && event.action == MotionEvent.ACTION_UP) {
-                            val projectionArea = map.projection
-                            val geoPointArea = projectionArea.fromPixels(event.x.toInt(), event.y.toInt()) as GeoPoint
-                            areaPoints.add(geoPointArea)
-
-                            if (drawAreaMode && areaPoints.size >= 3) {
-                                areaPolygon.setPoints(areaPoints.toList())
-                                if (!map.overlays.contains(areaPolygon)) {
-                                    map.overlays.add(areaPolygon)
-                                }
-                            }
-
-                            // Marker for last Point
-
-                            val cornerMarker = Marker(map).apply {
-                                position = geoPointArea
-                                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-                                icon = AppCompatResources.getDrawable(context, R.drawable.circle_small)
-                                isDraggable = false
-                                infoWindow = null
-                            }
-                            areaCornerMarkers.add(cornerMarker)
-                            map.overlays.add(cornerMarker)
-
-                            // Update Area
-                            if (drawAreaMode && areaPoints.size >= 3) {
-                                areaPolygon.setPoints(areaPoints.toList())
-                                if (!map.overlays.contains(areaPolygon)) {
-                                    map.overlays.add(areaPolygon)
-                                }
-                            }
-                            map.invalidate()
-                        }
-                        false
-                    }
-
-                    if (!map.overlays.contains(scaleBarOverlay)) {
-                        map.overlays.add(scaleBarOverlay)
-                    }
-                }
-            ).also {
-                DisposableEffect(lifecycleOwner) {
-                    val observer = LifecycleEventObserver { _, event ->
-                        when (event) {
-                            Lifecycle.Event.ON_RESUME -> mapView.onResume()
-                            Lifecycle.Event.ON_PAUSE -> mapView.onPause()
-                            else -> {}
-                        }
-                    }
-
-                    lifecycleOwner.lifecycle.addObserver(observer)
-
-                    onDispose {
-                        lifecycleOwner.lifecycle.removeObserver(observer)
-                    }
-                }
-            }
-
-
             if (!drawAreaMode) {
 
                 Column(
@@ -712,17 +354,12 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                 ) {
 
                     if (securityLevel > 1) {
+
+                        // Start create Area Button
                         FloatingActionButton(
                             onClick = {
-                                InfoWindow.closeAllInfoWindowsOn(mapView)
                                 menuVisible = false
                                 drawAreaMode = !drawAreaMode
-
-                                if (!drawAreaMode) {
-                                    areaPoints.clear()
-                                    mapView.overlays.remove(areaPolygon)
-                                    mapView.invalidate()
-                                }
                             }
                         ) {
                             Icon(
@@ -843,15 +480,10 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                     FloatingActionButton(
                         onClick = {
-                            drawAreaMode = !drawAreaMode
-                            if (!drawAreaMode) {
-                                areaPoints.clear()
-                                areaPolygon.setPoints(emptyList())
-                                mapView.overlays.remove(areaPolygon)
-                                areaCornerMarkers.forEach { mapView.overlays.remove(it) }
-                                areaCornerMarkers.clear()
-                                mapView.invalidate()
-                            }
+                            areaPoints.clear()
+                            areaPolygon.setPoints(emptyList())
+                            areaCornerMarkers.clear()
+                            drawAreaMode = false
                         },
                         modifier = Modifier
                             .padding(start = 0.dp, top = 0.dp, bottom = 0.dp, end = 0.dp)
@@ -865,11 +497,10 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                         onClick = {
                             if (areaPoints.isNotEmpty()) {
                                 areaPoints.removeAt(areaPoints.lastIndex)
-                                areaPolygon.setPoints(areaPoints.toList())
-                                val marker = areaCornerMarkers.removeLastOrNull()
-                                if (marker != null) mapView.overlays.remove(marker)
                             }
-                            mapView.invalidate()
+                            if (areaCornerMarkers.isNotEmpty()) {
+                                areaCornerMarkers.removeAt(areaCornerMarkers.lastIndex)
+                            }
                         },
                         modifier = Modifier
                             .padding(start = 0.dp, top = 0.dp, bottom = 0.dp, end = 0.dp)
@@ -1312,6 +943,8 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                         CoroutineScope(Dispatchers.IO).launch {
                             Log.d("MapScreen", "Start Coroutine to Save Area")
+                            Log.d("MapScreen", "AreaName on save: '$areaName'")
+
                             val areaId = areaDao.insertArea(
                                 AreaEntity(
                                     title = areaName.ifBlank { "Unbenannt" },
@@ -1337,20 +970,13 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                             areaDao.insertCoordinates(coords)
                             areaPoints.clear()
+                            areaName = ""
+                            areaDescription = ""
+                            dialogShowSaveArea = false
+                            selectedColor = Color.Red
+                            drawAreaMode = false
                             Log.d("MapScreen", "End Coroutine to Save Area")
                         }
-
-                        //areaPoints.clear()
-                        areaPolygon.setPoints(emptyList())
-                        areaCornerMarkers.forEach { mapView.overlays.remove(it) }
-                        areaCornerMarkers.clear()
-                        mapView.invalidate()
-
-                        dialogShowSaveArea = false
-                        areaName = ""
-                        areaDescription = ""
-                        selectedColor = Color.Red
-                        drawAreaMode = false
                     }) {
                         Text(stringResource(id = R.string.save))
                     }
@@ -1408,12 +1034,12 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
 fun formatLongitude(longitude: Double): String {
     val direction = if (longitude >= 0) "O" else "W"
-    return "$direction ${"%.5f".format(kotlin.math.abs(longitude))}°"
+    return "$direction ${"%.5f".format(abs(longitude))}°"
 }
 
 fun formatLatitude(latitude: Double): String {
     val direction = if (latitude >= 0) "N" else "S"
-    return "$direction ${"%.5f".format(kotlin.math.abs(latitude))}°"
+    return "$direction ${"%.5f".format(abs(latitude))}°"
 }
 
 fun formatAccuracy(latitude: Float): String {
@@ -1421,9 +1047,12 @@ fun formatAccuracy(latitude: Float): String {
 }
 
 fun getColoredVectorMarker(context: Context, drawableRes: Int, color: Int): Drawable {
-    val drawable = ContextCompat.getDrawable(context, drawableRes)
-        ?: throw IllegalArgumentException("loading Drawable error")
-    val wrapped = DrawableCompat.wrap(drawable).mutate()
-    DrawableCompat.setTint(wrapped, color)
-    return wrapped
+    return DrawableCache.coloredMarkers.getOrPut(drawableRes to color) {
+        Log.d("DrawableCache", "Creating new marker icon for color=$color")
+        val drawable = ContextCompat.getDrawable(context, drawableRes)
+            ?: throw IllegalArgumentException("loading Drawable error")
+        val wrapped = DrawableCompat.wrap(drawable).mutate()
+        DrawableCompat.setTint(wrapped, color)
+        wrapped
+    }
 }

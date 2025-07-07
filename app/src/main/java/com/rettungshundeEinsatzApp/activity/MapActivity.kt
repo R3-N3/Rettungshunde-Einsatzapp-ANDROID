@@ -19,7 +19,7 @@ import com.rettungshundeEinsatzApp.functions.checkTokenAndDownloadMyUserData
 import com.rettungshundeEinsatzApp.functions.downloadAllGpsLocations
 import com.rettungshundeEinsatzApp.functions.downloadAllUserData
 import com.rettungshundeEinsatzApp.functions.resetUserData
-import com.rettungshundeEinsatzApp.ui.screens.MapScreen
+import com.rettungshundeEinsatzApp.ui.screens.mapscreen.MapScreen
 import com.rettungshundeEinsatzApp.service.myLocation.MyLocationService
 import com.rettungshundeEinsatzApp.service.myLocation.MyLocationStatus
 import kotlinx.coroutines.CoroutineScope
@@ -73,11 +73,7 @@ class MapActivity : ComponentActivity() {
                 val parts = msg.split(",")
                 Log.d("MapActivity", "GetAllUserData: status=${parts[0]}, message=${parts[1]}")
                 CoroutineScope(Dispatchers.IO).launch {
-                    /*
-                    db.allUserDataDao().getAll().forEach {
-                        Log.d("MapActivity", "RoomUser: $it")
-                    }
-                    */
+
                 }
 
                 Log.d("MapActivity", "Start getAllGpsLocations")

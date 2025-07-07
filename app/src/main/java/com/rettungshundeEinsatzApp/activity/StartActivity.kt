@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.rettungshundeEinsatzApp.ui.screens.StartScreen
 
+
 class StartActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

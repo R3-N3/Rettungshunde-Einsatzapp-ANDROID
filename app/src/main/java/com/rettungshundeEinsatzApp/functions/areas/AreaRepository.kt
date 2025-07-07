@@ -86,9 +86,9 @@ class AreaRepository(
             // ➡️ Mapping
             val uploadAreas = areasToUpload.map { areaWithCoords ->
                 UploadArea(
-                    title = areaWithCoords.area.title ?: "Unbenannt",
-                    description = areaWithCoords.area.desc ?: "",
-                    color = areaWithCoords.area.color ?: "#FF0000",
+                    title = areaWithCoords.area.title,
+                    description = areaWithCoords.area.desc,
+                    color = areaWithCoords.area.color,
                     points = areaWithCoords.coordinates.sortedBy { it.orderIndex }.map { coord ->
                         UploadAreaPoint(
                             lat = coord.latitude,
