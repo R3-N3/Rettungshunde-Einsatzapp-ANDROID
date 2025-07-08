@@ -51,40 +51,40 @@ import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataE
 fun MapViewContainer(
     modifier: Modifier = Modifier,
 
-    // 👉 Deine Standortdaten
+    // my location data
     myLocations: List<MyLocationEntity>,
-    myGeoPoints: List<GeoPoint>, // precomputed aus myLocations für performance
+    myGeoPoints: List<GeoPoint>,
 
-    // 👉 Alle User-Standortdaten
+    // all user location data
     allLocations: List<AllUsersLocationsEntity>,
-    allUsers: List<AllUserDataEntity>, // falls du user track colors oder names brauchst
+    allUsers: List<AllUserDataEntity>,
 
-    // 👉 Deine Flächen (Areas)
+    // Areas
     allAreas: List<AreaWithCoordinates>,
 
-    // 👉 Farbe deines Tracks
+    // my track color
     myTrackColor: String,
 
-    // 👉 States & Flags
+    // States & Flags
     drawAreaMode: Boolean,
     mapCenteredOnce: Boolean,
 
-    // 👉 Funktionen
+    // Function
     markAsCentered: () -> Unit,
 
-    // 👉 Area-Editing-States
+    // Area-Editing-States
     areaPoints: SnapshotStateList<GeoPoint>,
     areaPolygon: Polygon,
     areaCornerMarkers: SnapshotStateList<Marker>,
 
-    // 👉 Security Level
+    // Security Level
     securityLevel: Int,
 
-    // 👉 User Informationen
+    // User information
     myUserName: String,
     radioCallName: String,
 
-    // 👉 Format Strings & Converter
+    // Format Strings & Converter
     lastPointText: String,
     radioCallNameText: String,
     accuracyText: String,
@@ -94,14 +94,13 @@ fun MapViewContainer(
 
     locationToMGRSConverter: MyLocationLatLongToMGRS,
 
-    // 👉 Map scale overlay (optional param, falls in MapScreen erstellt)
+    // Map scale overlay (optional param, if in MapScreen created)
     scaleBarOverlay: ScaleBarOverlay,
 
-    // 👉 Time & distance threshold
+    // Time & distance threshold
     timeDiffMillis: Long,
     distanceMeters: Double,
 
-    onToggleDrawAreaMode: () -> Unit
 
 ) {
 
@@ -163,18 +162,23 @@ fun MapViewContainer(
             // Clear map und crate new
             map.overlays.clear()
 
-            allAreas.forEach { areaWithCoords ->
-                if (areaWithCoords.coordinates.isNotEmpty()) {
+            allAreas.forEach { areaWithCoordinates ->
+                if (areaWithCoordinates.coordinates.isNotEmpty()) {
                     val polygon = Polygon(map).apply {
-                        val geoPoints = areaWithCoords.coordinates.sortedBy { it.orderIndex }
-                            .map { coord -> GeoPoint(coord.latitude, coord.longitude) }
+                        val geoPoints = areaWithCoordinates.coordinates.sortedBy { it.orderIndex }
+                            .map { coordinate -> GeoPoint(coordinate.latitude, coordinate.longitude) }
 
                         setPoints(geoPoints)
 
                         try {
-                            val baseColor = android.graphics.Color.parseColor(areaWithCoords.area.color)
+                            val baseColor = try {
+                                val colorString = areaWithCoordinates.area.color
+                                colorString.toColorInt()
+                            } catch (_: IllegalArgumentException) {
+                                android.graphics.Color.WHITE
+                            }
 
-                            // 🟢 Setze Füllfarbe mit 30% Transparenz
+                            // set fil color with transparency
                             fillPaint.color = android.graphics.Color.argb(
                                 (0.3f * 255).toInt(),
                                 android.graphics.Color.red(baseColor),
@@ -182,7 +186,7 @@ fun MapViewContainer(
                                 android.graphics.Color.blue(baseColor)
                             )
 
-                            // 🟢 Setze Outline mit 70% Transparenz
+                            // set Outline mit 70% transparency
                             outlinePaint.color = android.graphics.Color.argb(
                                 (0.7f * 255).toInt(),
                                 android.graphics.Color.red(baseColor),
@@ -191,7 +195,7 @@ fun MapViewContainer(
                             )
 
                         } catch (_: Exception) {
-                            // fallback falls color string fehlerhaft ist
+                            // fallback if color string false
                             fillPaint.color = android.graphics.Color.argb(80, 255, 0, 0) // rot, 30%
                             outlinePaint.color = android.graphics.Color.argb(180, 255, 0, 0) // rot, 70%
                         }
@@ -276,7 +280,7 @@ fun MapViewContainer(
 
                         val accuracyCircle = Polygon().apply {
                             points = Polygon.pointsAsCircle(lastPoint, myLastLocation.accuracy.toDouble())
-                            fillPaint.color = ("#" + "22" + myTrackColor.removePrefix("#").drop(2)).toColorInt()  // halbtransparente farbe bei 20% mit alphawert 33
+                            fillPaint.color = ("#" + "22" + myTrackColor.removePrefix("#").drop(2)).toColorInt()
                             outlinePaint.color = ("#" + "33" + myTrackColor.removePrefix("#").drop(2)).toColorInt()
                             outlinePaint.strokeWidth = 2f
                         }

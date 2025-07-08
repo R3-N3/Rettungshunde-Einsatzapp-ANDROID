@@ -135,6 +135,6 @@
     <string name="location_permission_info_text">Diese App benötigt den Zugriff auf deinen Standort, auch im Hintergrund, um deine Position während Sucheinsätzen kontinuierlich aufzuzeichnen. So kann deine Rettungshundestaffel live mitverfolgen, welche Flächen bereits abgesucht wurden.</string>
     <string name="location_permission_info_title">Standortberechtigungen benötigt</string>
     <string name="next">Weiter</string>
-
+    <string name="area_description_label">Beschreibung Fläche</string>
 
 </resources>

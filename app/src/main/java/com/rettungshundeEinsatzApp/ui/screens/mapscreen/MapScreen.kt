@@ -157,7 +157,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val areaDatabase = AreaDatabase.getDatabase(context)
     val areaDao = areaDatabase.areaDao()
     val retrofit = Retrofit.Builder()
-        .baseUrl(serverApiURL) // Stelle sicher, dass serverApiURL mit / endet
+        .baseUrl(serverApiURL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val apiService = retrofit.create(ApiService::class.java)
@@ -252,40 +252,40 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
             MapViewContainer(
                 modifier = Modifier.fillMaxSize(),
 
-                // 👉 Deine Standortdaten
+                // My GPS Data
                 myLocations = myLocations,
                 myGeoPoints = myLocations.map { GeoPoint(it.latitude, it.longitude) },
 
-                // 👉 Alle User-Standortdaten
+                // All User  Data
                 allLocations = allLocations,
                 allUsers = allUsers,
 
-                // 👉 Deine Flächen (Areas)
+                // All Area Data
                 allAreas = allAreas,
 
-                // 👉 Farbe deines Tracks
+                // my track color
                 myTrackColor = myTrackColor,
 
-                // 👉 States & Flags
+                // States & Flags
                 drawAreaMode = drawAreaMode,
                 mapCenteredOnce = mapCenteredOnce,
 
-                // 👉 Funktionen
+                // Function
                 markAsCentered = { viewModel.markAsCentered() },
 
-                // 👉 Area-Editing-States
+                // Area-Editing-States
                 areaPoints = areaPoints,
                 areaPolygon = areaPolygon,
                 areaCornerMarkers = areaCornerMarkers,
 
-                // 👉 Security Level
+                // Security Level
                 securityLevel = securityLevel,
 
-                // 👉 User Informationen
+                // User information
                 myUserName = myUserName,
                 radioCallName = radioCallName,
 
-                // 👉 Format Strings & Converter
+                // Format Strings & Converter
                 lastPointText = lastPointText,
                 radioCallNameText = radioCallNameText,
                 accuracyText = accuracyText,
@@ -295,14 +295,13 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                 locationToMGRSConverter = locationToMGRSConverter,
 
-                // 👉 Map scale overlay
+                // Map scale overlay
                 scaleBarOverlay = scaleBarOverlay,
 
-                // 👉 Time & distance threshold
+                // Time & distance threshold
                 timeDiffMillis = timeDiffMillis,
                 distanceMeters = distanceMeters,
 
-                onToggleDrawAreaMode = { drawAreaMode = !drawAreaMode }
             )
 
             // background for statusBar
@@ -377,13 +376,13 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             if (securityLevel > 1) {
 
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    // 1. Upload durchführen
+                                    // Do Upload
                                     val (uploadSuccess, uploadMessage) = areaRepository.uploadAreas(token)
 
                                     if (uploadSuccess) {
                                         areaRepository.downloadAreas(token)
                                     } else {
-                                        Log.e("Sync", "Upload fehlgeschlagen: $uploadMessage")
+                                        Log.e("Sync", "Upload failed: $uploadMessage")
                                     }
                                 }
 
@@ -934,9 +933,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                 confirmButton = {
                     TextButton(onClick = {
 
-                        val jsonPoints = areaPoints.joinToString(separator = ";") {
-                            "${it.latitude},${it.longitude}"
-                        }
                         val colorHex = String.format("#%06X", 0xFFFFFF and selectedColor.toArgb())
 
                         Log.d("insertArea", "areaPoints size before save: ${areaPoints.size}")
@@ -947,14 +943,14 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                             val areaId = areaDao.insertArea(
                                 AreaEntity(
-                                    title = areaName.ifBlank { "Unbenannt" },
-                                    desc = areaDescription.ifBlank { "" },  // <-- neue Beschreibung speichern
+                                    title = areaName.ifBlank { "n.n." },
+                                    desc = areaDescription.ifBlank { "" },
                                     color = colorHex,
                                     uploadedToServer = false
                                 )
                             )
 
-                            val coords = areaPoints.mapIndexed { index, point ->
+                            val coordinates = areaPoints.mapIndexed { index, point ->
                                 AreaCoordinateEntity(
                                     latitude = point.latitude,
                                     longitude = point.longitude,
@@ -963,12 +959,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                                 )
                             }
 
-                            Log.d("insertArea", "Coords to insert:")
-                            coords.forEachIndexed { index, coord ->
-                                Log.d("insertArea", "🔹 $index: lat=${coord.latitude}, lon=${coord.longitude}, orderIndex=${coord.orderIndex}, areaId=${coord.areaId}")
-                            }
-
-                            areaDao.insertCoordinates(coords)
+                            areaDao.insertCoordinates(coordinates)
                             areaPoints.clear()
                             areaName = ""
                             areaDescription = ""
@@ -999,7 +990,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                         OutlinedTextField(
                             value = areaDescription,
                             onValueChange = { areaDescription = it },
-                            label = { Text("Beschreibung der Fläche") },
+                            label = { Text(stringResource(id = R.string.area_description_label)) },
                             modifier = Modifier.fillMaxWidth()
                         )
 
