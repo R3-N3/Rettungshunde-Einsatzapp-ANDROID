@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ba79cf76dc3668ed13d0d3fa1f24dfcc",
+    "identityHash": "653bad1290c21e492974026f5f2c8c0d",
     "entities": [
       {
         "tableName": "area",
@@ -89,7 +89,17 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_area_coordinate_areaId",
+            "unique": false,
+            "columnNames": [
+              "areaId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_area_coordinate_areaId` ON `${TABLE_NAME}` (`areaId`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "area",
@@ -108,7 +118,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ba79cf76dc3668ed13d0d3fa1f24dfcc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '653bad1290c21e492974026f5f2c8c0d')"
     ]
   }
 }

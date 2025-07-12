@@ -61,7 +61,7 @@ import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataP
 import com.rettungshundeEinsatzApp.functions.deleteUser
 import com.rettungshundeEinsatzApp.functions.downloadAllUserData
 import com.rettungshundeEinsatzApp.ui.ReaAppTheme
-import com.rettungshundeEinsatzApp.viewmodel.userdata.AllUserProfileViewModel
+import com.rettungshundeEinsatzApp.viewmodel.AllUserProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

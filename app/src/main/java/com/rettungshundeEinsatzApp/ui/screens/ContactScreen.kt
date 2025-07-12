@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataEntity
-import com.rettungshundeEinsatzApp.viewmodel.userdata.AllUserProfileViewModel
+import com.rettungshundeEinsatzApp.viewmodel.AllUserProfileViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.core.net.toUri
 import com.rettungshundeEinsatzApp.R

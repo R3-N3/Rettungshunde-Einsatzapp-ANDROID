@@ -132,7 +132,7 @@ fun MapViewContainer(
             controller.setCenter(GeoPoint(50.69, 7.128))
             setMultiTouchControls(true)
             zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-            setTilesScaledToDpi(true)
+            //setTilesScaledToDpi(true)
         }
     }
 

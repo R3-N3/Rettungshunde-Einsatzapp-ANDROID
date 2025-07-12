@@ -1,4 +1,4 @@
-package com.rettungshundeEinsatzApp.viewmodel.userdata
+package com.rettungshundeEinsatzApp.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

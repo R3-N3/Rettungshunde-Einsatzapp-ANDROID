@@ -12,7 +12,7 @@ object AllUserDataProvider {
             val instance = Room.databaseBuilder(
                 context.applicationContext,
                 AllUserDataAndLocationsDatabase::class.java,
-                "rea_all_user_database"
+                "all_user_data_and_locations_db"
             ).build()
             INSTANCE = instance
             instance

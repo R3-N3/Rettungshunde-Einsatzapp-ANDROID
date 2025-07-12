@@ -194,13 +194,6 @@ fun SettingsScreen() {
                 }
 
 
-
-
-
-
-
-
-
                 if (colorSheetState.isVisible) {
                     ModalBottomSheet(
                         onDismissRequest = {
@@ -262,40 +255,8 @@ fun SettingsScreen() {
                         }
                     }
                 }
-
-
-
-
-
-
-
-
-
             }
         }
     }
 }
 
-@Preview(name = "Light Mode", showBackground = true)
-@Composable
-fun SettingsScreenPreviewLight() {
-    ReaAppTheme {
-        SettingsScreen()
-    }
-}
-
-@Preview(name = "Dark Mode", showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun SettingsScreenPreviewDark() {
-    ReaAppTheme {
-        SettingsScreen()
-    }
-}
-
-@Preview(name = "Large Font", fontScale = 1.5f, showBackground = true)
-@Composable
-fun SettingsScreenPreviewLargeFont() {
-    ReaAppTheme {
-        SettingsScreen()
-    }
-}

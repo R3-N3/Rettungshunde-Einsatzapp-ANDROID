@@ -22,4 +22,13 @@ interface AllUserDataDao {
 
     @Query("SELECT * FROM userData WHERE ID = :id")
     suspend fun getById(id: Int): AllUserDataEntity?
+
+    @Query("""
+    SELECT DISTINCT userData.*
+    FROM userData
+    INNER JOIN allUsersLocations
+    ON userData.ID = allUsersLocations.user_id
+    ORDER BY username COLLATE NOCASE ASC
+""")
+    fun getAllUsersWithLocationsAsFlow(): Flow<List<AllUserDataEntity>>
 }

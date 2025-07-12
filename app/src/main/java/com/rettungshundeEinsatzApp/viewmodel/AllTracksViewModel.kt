@@ -1,5 +1,4 @@
-package com.rettungshundeEinsatzApp.viewmodel.location
-
+package com.rettungshundeEinsatzApp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 
-class MapScreenAllTracksViewModel(
+class AllTracksViewModel(
     locationDao: AllUserLocationsDao,
     userDao: AllUserDataDao
 ) : ViewModel() {
@@ -20,14 +19,14 @@ class MapScreenAllTracksViewModel(
     val allLocations: StateFlow<List<AllUsersLocationsEntity>> =
         locationDao.getAllAsFlow().stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.Companion.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
     val allUsers: StateFlow<List<AllUserDataEntity>> =
         userDao.getAllAsFlow().stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.Companion.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
@@ -37,9 +36,9 @@ class MapScreenAllTracksViewModel(
     ) : ViewModelProvider.Factory {
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MapScreenAllTracksViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(AllTracksViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return MapScreenAllTracksViewModel(locationDao, userDao) as T
+                return AllTracksViewModel(locationDao, userDao) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

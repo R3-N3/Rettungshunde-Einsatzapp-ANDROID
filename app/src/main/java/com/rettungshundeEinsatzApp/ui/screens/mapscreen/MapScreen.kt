@@ -23,7 +23,7 @@ import com.rettungshundeEinsatzApp.R
 import com.rettungshundeEinsatzApp.database.mylocallocation.MyLocationDatabase
 import com.rettungshundeEinsatzApp.service.myLocation.MyLocationLatLongToMGRS
 import com.rettungshundeEinsatzApp.ui.ReaAppTheme
-import com.rettungshundeEinsatzApp.viewmodel.mapscreen.MapScreenMyTrackViewModel
+import com.rettungshundeEinsatzApp.viewmodel.MyTrackViewModel
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -76,7 +76,7 @@ import com.rettungshundeEinsatzApp.functions.deleteMyGPSData
 import com.rettungshundeEinsatzApp.functions.downloadAllGpsLocations
 import com.rettungshundeEinsatzApp.functions.downloadAllUserData
 import com.rettungshundeEinsatzApp.service.myLocation.MyLocationStatus
-import com.rettungshundeEinsatzApp.viewmodel.location.MapScreenAllTracksViewModel
+import com.rettungshundeEinsatzApp.viewmodel.AllTracksViewModel
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.toArgb
@@ -93,6 +93,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.core.content.edit
+import com.rettungshundeEinsatzApp.activity.ManageTracksOverviewActivity
 import com.rettungshundeEinsatzApp.activity.ReportActivity
 import com.rettungshundeEinsatzApp.database.area.AreaCoordinateEntity
 import com.rettungshundeEinsatzApp.database.area.AreaDatabase
@@ -121,7 +122,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val radioCallName = sharedPreferences.getString("radiocallname", "").toString()
     val securityLevel = sharedPreferences.getString("securityLevel", "1")?.toIntOrNull() ?: 1
     val myLocationDatabase = MyLocationDatabase.getDatabase(context)
-    val viewModel: MapScreenMyTrackViewModel = viewModel(factory = MapScreenMyTrackViewModel.Factory(myLocationDatabase.locationDao()))
+    val viewModel: MyTrackViewModel = viewModel(factory = MyTrackViewModel.Factory(myLocationDatabase.locationDao()))
     val myLocations by viewModel.locations.collectAsState()
     val locationToMGRSConverter = MyLocationLatLongToMGRS()
     var dialogInfoAndConfirm by remember { mutableStateOf(false) }
@@ -171,8 +172,8 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val timeText = stringResource(id = R.string.time)
     val unknownText = stringResource(id = R.string.unknown)
     val oSMCopyright = stringResource(id = R.string.osm_copyright)
-    val viewModelAllTracks: MapScreenAllTracksViewModel = viewModel(
-        factory = MapScreenAllTracksViewModel.Factory(locationDao, userDao)
+    val viewModelAllTracks: AllTracksViewModel = viewModel(
+        factory = AllTracksViewModel.Factory(locationDao, userDao)
     )
     val allLocations by viewModelAllTracks.allLocations.collectAsState()
     val allUsers by viewModelAllTracks.allUsers.collectAsState()
@@ -660,25 +661,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Button(
-                        onClick = {
-                            dialogMod = 1
-                            dialogInfoAndConfirm = true
-                        },
-                        enabled = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(id = R.string.delete_my_gps_data))
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
 
                     Button(
                         onClick = {
@@ -701,26 +683,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                     Spacer(modifier = Modifier.height(8.dp))
 
                     if (securityLevel > 1) {
-
-                        Button(
-                            onClick = {
-                                dialogMod = 2
-                                dialogInfoAndConfirm = true
-                            },
-                            enabled = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.DeleteForever,
-                                contentDescription = null
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(id = R.string.delete_all_gps_data))
-                        }
-
-                        Spacer(modifier = Modifier.height(8.dp))
 
                         Button(
                             onClick = {
@@ -762,6 +724,24 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(stringResource(id = R.string.settings_manage_users))
+                        }
+
+                        Button(
+                            onClick = {
+                                val intent = Intent(context, ManageTracksOverviewActivity::class.java)
+                                context.startActivity(intent)
+                            },
+                            enabled = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ManageAccounts,
+                                contentDescription = null
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Trackverwaltung")
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))

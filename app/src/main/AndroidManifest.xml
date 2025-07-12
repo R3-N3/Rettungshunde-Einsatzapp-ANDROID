@@ -37,6 +37,7 @@
         <activity android:name=".activity.MapActivity" android:exported="false"
             android:configChanges="keyboardHidden|orientation|screenSize|uiMode" />
         <activity android:name=".activity.NewUserActivity" android:exported="false" />
+        <activity android:name=".activity.ManageTracksOverviewActivity" android:exported="false" />
         <activity android:name=".activity.ContactActivity" android:exported="false" />
         <activity android:name=".activity.SettingsActivity" android:exported="false" />
         <activity android:name=".activity.ManageUsersOverviewActivity" android:exported="false" />
