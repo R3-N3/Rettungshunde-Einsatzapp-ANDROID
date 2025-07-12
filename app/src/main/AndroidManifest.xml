@@ -13,9 +13,9 @@
 
 
     <application
-        android:icon="@mipmap/icon_rea2"
+        android:icon="@mipmap/rea_launcher_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/icon_rea2_round"
+        android:roundIcon="@mipmap/rea_launcher_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.REAMaterialNoActionBar"
         android:usesCleartextTraffic="true"
