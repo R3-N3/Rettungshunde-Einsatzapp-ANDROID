@@ -125,7 +125,7 @@ class MyLocationService : Service() {
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle(getString(R.string.gps_tacking_running_title))
             .setContentText(getString(R.string.gps_tacking_running_text))
-            .setSmallIcon(R.drawable.notification_icon_rea2)
+            .setSmallIcon(R.drawable.rea_notification_icon)
             .addAction(android.R.drawable.ic_delete, getString(R.string.stop_gps_tracking), stopPendingIntent) // <- Action Button
             .build()
 

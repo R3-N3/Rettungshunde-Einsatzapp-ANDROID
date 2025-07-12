@@ -86,7 +86,7 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.Center
             ) {
 
-                val logo = if (isDarkMode) R.drawable.icon_rea2_logo_light else R.drawable.icon_rea2_logo_dark
+                val logo = if (isDarkMode) R.drawable.rea_icon_logo_light else R.drawable.rea_icon_logo_dark
                 Image(
                     painter = painterResource(logo),
                     contentDescription = stringResource(id = R.string.logo_description),

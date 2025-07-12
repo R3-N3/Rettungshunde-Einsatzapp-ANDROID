@@ -45,9 +45,9 @@ fun StartScreen(onLoginClick: () -> Unit) {
         Font(R.font.the_sans_bold)
     )
     val logoRes = if (isDarkMode) {
-        R.drawable.icon_rea2_logo_light
+        R.drawable.rea_icon_logo_light
     } else {
-        R.drawable.icon_rea2_logo_dark
+        R.drawable.rea_icon_logo_dark
     }
 
     ReaAppTheme {

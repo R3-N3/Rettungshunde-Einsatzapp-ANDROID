@@ -1,11 +1,11 @@
 <resources>
     <style name="Theme.REAMaterialNoActionBar" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/icon_rea2_foreground_light</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/rea_icon_foreground_light</item>
         <item name="android:windowSplashScreenBackground">@android:color/black</item>
     </style>
 
     <style name="Theme.REAMaterialActionBar" parent="android:ThemeOverlay.Material.ActionBar">
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/icon_rea2_foreground_light</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/rea_icon_foreground_light</item>
         <item name="android:windowSplashScreenBackground">@android:color/black</item>
     </style>
 </resources>
