@@ -13,6 +13,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.toColorInt
 import org.osmdroid.views.MapView
+import com.rettungshundeEinsatzApp.functions.calculatePolygonArea
+
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.Marker
@@ -157,8 +159,6 @@ fun MapViewContainer(
 
             Log.d("MapScreen", "Update")
 
-
-
             // Clear map und crate new
             map.overlays.clear()
 
@@ -169,16 +169,16 @@ fun MapViewContainer(
                             .map { coordinate -> GeoPoint(coordinate.latitude, coordinate.longitude) }
 
                         setPoints(geoPoints)
+                        isEnabled = true
 
+                        // Farbe wie gehabt
                         try {
                             val baseColor = try {
-                                val colorString = areaWithCoordinates.area.color
-                                colorString.toColorInt()
+                                areaWithCoordinates.area.color.toColorInt()
                             } catch (_: IllegalArgumentException) {
                                 android.graphics.Color.WHITE
                             }
 
-                            // set fil color with transparency
                             fillPaint.color = android.graphics.Color.argb(
                                 (0.3f * 255).toInt(),
                                 android.graphics.Color.red(baseColor),
@@ -186,22 +186,49 @@ fun MapViewContainer(
                                 android.graphics.Color.blue(baseColor)
                             )
 
-                            // set Outline mit 70% transparency
                             outlinePaint.color = android.graphics.Color.argb(
                                 (0.7f * 255).toInt(),
                                 android.graphics.Color.red(baseColor),
                                 android.graphics.Color.green(baseColor),
                                 android.graphics.Color.blue(baseColor)
                             )
-
                         } catch (_: Exception) {
-                            // fallback if color string false
-                            fillPaint.color = android.graphics.Color.argb(80, 255, 0, 0) // rot, 30%
-                            outlinePaint.color = android.graphics.Color.argb(180, 255, 0, 0) // rot, 70%
+                            fillPaint.color = android.graphics.Color.argb(80, 255, 0, 0)
+                            outlinePaint.color = android.graphics.Color.argb(180, 255, 0, 0)
                         }
 
                         outlinePaint.strokeWidth = 3f
-                        isEnabled = true
+
+                        // Setze InfoWindow mit onOpen-Logik
+                        infoWindow = object : InfoWindow(R.layout.user_info_window, mapView) {
+                            override fun onOpen(item: Any?) {
+                                val view = mView
+                                val areaTitleText = view.findViewById<TextView>(R.id.user_info_title)
+                                val areaDescriptionText = view.findViewById<TextView>(R.id.user_info_description)
+                                val areaInSqMeters = calculatePolygonArea(points)
+                                val areaInHectares = areaInSqMeters / 10_000.0
+                                val uploadedStatus = if (areaWithCoordinates.area.uploadedToServer) "✅ Hochgeladen" else "❌ Nicht hochgeladen"
+                                areaTitleText.text = areaWithCoordinates.area.title.ifBlank { "Unbenannte Fläche" }
+                                areaDescriptionText.text = """
+                                    ${areaWithCoordinates.area.desc.ifBlank { "–" }}
+                                    ${"%,.0f".format(Locale.getDefault(), areaInSqMeters)} m² (${String.format(Locale.getDefault(), "%.2f", areaInHectares)} ha)
+                                    $uploadedStatus
+                                    """.trimIndent()
+
+
+
+
+
+                            }
+
+                            override fun onClose() {}
+                        }
+
+                        setOnClickListener { polygon, mapView, eventPos ->
+                            InfoWindow.closeAllInfoWindowsOn(mapView)
+                            polygon.showInfoWindow()
+                            true
+                        }
                     }
                     map.overlays.add(polygon)
                 }
@@ -306,9 +333,9 @@ fun MapViewContainer(
                                     val areaNameText =
                                         view.findViewById<TextView>(R.id.user_info_title)
                                     areaNameText.text = myUserName
-                                    val areaDescriptionText =
+                                    val userDescriptionText =
                                         view.findViewById<TextView>(R.id.user_info_description)
-                                    areaDescriptionText.text = """
+                                    userDescriptionText.text = """
                                                 $radioCallNameText: $radioCallName
                                                 
                                                 $lastPointText:
