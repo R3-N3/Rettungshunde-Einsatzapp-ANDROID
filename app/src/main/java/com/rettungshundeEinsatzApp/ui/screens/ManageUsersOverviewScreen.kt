@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -56,6 +57,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rettungshundeEinsatzApp.R
 import com.rettungshundeEinsatzApp.activity.ManageUserSingleViewActivity
 import com.rettungshundeEinsatzApp.activity.ManageUsersOverviewActivity
+import com.rettungshundeEinsatzApp.activity.NewUserActivity
 import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataEntity
 import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataProvider
 import com.rettungshundeEinsatzApp.functions.deleteUser
@@ -105,9 +107,30 @@ fun ManageUsersOverviewScreen(
                     .padding(innerPadding)
                     .padding(start =16.dp, top = 10.dp, bottom = 16.dp, end = 16.dp)
             ) {
+
+                Button(
+                    onClick = {
+                        val intent = Intent(context, NewUserActivity::class.java)
+                        context.startActivity(intent)
+                    },
+                    enabled = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PersonAdd,
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(id = R.string.settings_create_new_user))
+                }
+
+
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+
                     items(userList) { user ->
                         Card(
                             modifier = Modifier

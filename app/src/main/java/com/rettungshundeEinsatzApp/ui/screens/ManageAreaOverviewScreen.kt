@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -52,39 +51,29 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rettungshundeEinsatzApp.R
-import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataAndLocationsDatabase
-import com.rettungshundeEinsatzApp.database.mylocallocation.MyLocationDatabase
-import com.rettungshundeEinsatzApp.functions.deleteAllGPSData
-import com.rettungshundeEinsatzApp.functions.deleteMyGPSData
+import com.rettungshundeEinsatzApp.database.area.AreaDatabase
+import com.rettungshundeEinsatzApp.functions.deleteAllAreas
 import com.rettungshundeEinsatzApp.ui.ReaAppTheme
-import com.rettungshundeEinsatzApp.viewmodel.MyTrackViewModel
-import com.rettungshundeEinsatzApp.viewmodel.UsersWithTracksViewModel
+import com.rettungshundeEinsatzApp.viewmodel.AreaViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManageTracksOverviewScreen() {
+fun ManageAreaOverviewScreen() {
 
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("REAPrefs", MODE_PRIVATE)
-    val myUserName = sharedPreferences.getString("username", "").toString()
-    val db = AllUserDataAndLocationsDatabase.getInstance(context)
-    val userDao = db.allUserDataDao()
-    val locationDao = db.allUsersLocationsDao()
-    val viewModel: UsersWithTracksViewModel = viewModel(factory = UsersWithTracksViewModel.Factory(userDao, locationDao))
-    val myLocationDao = MyLocationDatabase.getDatabase(context).locationDao()
-    val myTrackViewModel: MyTrackViewModel = viewModel(factory = MyTrackViewModel.Factory(myLocationDao))
+
+    val areaDao = AreaDatabase.getDatabase(context).areaDao()
+    val areaViewModel: AreaViewModel = viewModel(factory = AreaViewModel.Factory(areaDao))
+    val areas by areaViewModel.areas.collectAsState()
 
     val securityLevel = sharedPreferences.getString("securityLevel", "1")?.toIntOrNull() ?: 1
     val token: String = sharedPreferences.getString("token", "").toString()
     val serverApiURL = sharedPreferences.getString("serverApiURL", "").toString()
 
-    val myTrackStats by myTrackViewModel.trackStats.collectAsState()
-    val usersWithTrackStats by viewModel.usersWithTrackStats.collectAsState(initial = emptyList())
-
     val coroutineScope = rememberCoroutineScope()
-    val confirmDeleteMyGPSDataSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val confirmDeleteAllGPSDataSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val confirmDeleteAllAreasSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val resultSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     var isSubmitting = false
@@ -93,7 +82,7 @@ fun ManageTracksOverviewScreen() {
 
     ReaAppTheme {
         Scaffold(
-            topBar = { TopAppBar(title = { Text("Alle Tracks") }) }
+            topBar = { TopAppBar(title = { Text("Alle Flächen") }) }
         ) { paddingValues ->
 
             LazyColumn(
@@ -102,27 +91,12 @@ fun ManageTracksOverviewScreen() {
                     .padding(16.dp)
             ) {
                 item {
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                confirmDeleteMyGPSDataSheetState.show()
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                    ) {
-                        Icon(Icons.Default.DeleteForever, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Lösche Meine GPS Daten", fontSize = 18.sp)
-                    }
 
                     if (securityLevel > 1) {
                         Button(
                             onClick = {
                                 coroutineScope.launch {
-                                    confirmDeleteAllGPSDataSheetState.show()
+                                    confirmDeleteAllAreasSheetState.show()
                                 }
                             },
                             enabled = true,
@@ -133,46 +107,12 @@ fun ManageTracksOverviewScreen() {
                         ) {
                             Icon(Icons.Default.DeleteForever, contentDescription = null)
                             Spacer(Modifier.width(8.dp))
-                            Text("Alle GPS Daten löschen", fontSize = 18.sp)
-                        }
-
-                        Button(
-                            onClick = { },
-                            enabled = false,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Green)
-                        ) {
-                            Icon(Icons.Default.Share, contentDescription = null)
-                            Spacer(Modifier.width(8.dp))
-                            Text("Alle Tracks als .gpx Datei exportieren", fontSize = 18.sp)
+                            Text("Alle Flächen löschen", fontSize = 18.sp)
                         }
                     }
 
                     Text(
-                        text = "Mein Track",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 32.dp, start = 16.dp, bottom = 8.dp)
-                    )
-
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(8.dp)) {
-                            if (myTrackStats.pointCount == 0) {
-                                Text("Kein eigener Track vorhanden", style = MaterialTheme.typography.bodyMedium)
-                            } else {
-                                Text(myUserName, style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 4.dp))
-                                Text("Anzahl Wegpunkte: ${myTrackStats.pointCount}", style = MaterialTheme.typography.bodyMedium)
-                                Text("Gesamtlänge: ${"%.1f".format(myTrackStats.totalDistanceMeters)} m", style = MaterialTheme.typography.bodyMedium)
-                            }
-                        }
-                    }
-
-                    Text(
-                        text = "Alle Benutzer",
+                        text = "Alle Flächen",
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 32.dp, start = 16.dp, bottom = 8.dp)
                     )
@@ -180,13 +120,12 @@ fun ManageTracksOverviewScreen() {
 
                 item {
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
-                        if (usersWithTrackStats.isEmpty()) {
+                        if (areas.isEmpty()) {
                             Text(
-                                "Keine Tracks vorhanden",
+                                "Keine Flächen vorhanden",
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -194,22 +133,26 @@ fun ManageTracksOverviewScreen() {
                             )
                         } else {
                             Column(modifier = Modifier.padding(8.dp)) {
-                                usersWithTrackStats.forEachIndexed { index, userStats ->
-                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                areas.forEachIndexed { index, areaWithCoords ->
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                    ) {
                                         Text(
-                                            text = userStats.user.username,
-                                            style = MaterialTheme.typography.titleLarge,
-                                            modifier = Modifier.padding(top = 4.dp)
+                                            text = areaWithCoords.area.title,
+                                            style = MaterialTheme.typography.titleMedium
                                         )
                                         Text(
-                                            text = "Anzahl Wegpunkte: ${userStats.trackCount}",
+                                            text = areaWithCoords.area.desc,
                                             style = MaterialTheme.typography.bodyMedium
                                         )
                                         Text(
-                                            text = "Gesamtlänge: ${"%.1f".format(userStats.totalDistanceMeters)} m",
-                                            style = MaterialTheme.typography.bodyMedium
+                                            text = "Koordinatenpunkte: ${areaWithCoords.coordinates.size}",
+                                            style = MaterialTheme.typography.bodySmall
                                         )
-                                        if (index < usersWithTrackStats.lastIndex) {
+                                        // Divider nur anzeigen, wenn es nicht der letzte Eintrag ist
+                                        if (index < areas.lastIndex) {
                                             HorizontalDivider(
                                                 modifier = Modifier.padding(top = 8.dp),
                                                 thickness = 1.dp,
@@ -224,25 +167,25 @@ fun ManageTracksOverviewScreen() {
                 }
             }
 
-            if (confirmDeleteMyGPSDataSheetState.isVisible) {
+            if (confirmDeleteAllAreasSheetState.isVisible) {
                 ModalBottomSheet(
                     onDismissRequest = {
-                        coroutineScope.launch { confirmDeleteMyGPSDataSheetState.hide() }
+                        coroutineScope.launch { confirmDeleteAllAreasSheetState.hide() }
                     },
-                    sheetState = confirmDeleteMyGPSDataSheetState
+                    sheetState = confirmDeleteAllAreasSheetState
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(24.dp)
                     ) {
-                        Text("⚠️ Meine GPS Daten Löschen", style = MaterialTheme.typography.titleMedium)
-                        Text("Möchtest du deine GPS-Daten löschen? Diese werden danach nicht mehr auf der Karte angezeigt!", modifier = Modifier.padding(top = 8.dp))
+                        Text("⚠️ Alle Flächen Löschen", style = MaterialTheme.typography.titleMedium)
+                        Text("Möchtest du alle Flächen löschen? Diese werden dann nicht mehr für dich und andere auf der Karte angezeigt", modifier = Modifier.padding(top = 8.dp))
                         Spacer(Modifier.height(16.dp))
                         Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
                             Button(
                                 onClick = {
-                                    coroutineScope.launch { confirmDeleteMyGPSDataSheetState.hide() }
+                                    coroutineScope.launch { confirmDeleteAllAreasSheetState.hide() }
                                 }
                             ) { Text(stringResource(id = R.string.cancel)) }
 
@@ -251,64 +194,19 @@ fun ManageTracksOverviewScreen() {
                             Button(
                                 onClick = {
                                     isSubmitting = true
-                                    deleteMyGPSData(context) { success, message ->
-                                        Log.d("ManageTracksOverviewScreen", "Lösche meine Daten: $success – $message")
-                                        resultMessage = message
-                                        resultSuccess = success
-                                        coroutineScope.launch {
-                                            confirmDeleteMyGPSDataSheetState.hide()
-                                            resultSheetState.show()
-                                        }
-                                        isSubmitting = false
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                            ) { Text("Meine GPS-Daten Löschen") }
-                        }
-                    }
-                }
-            }
-
-            if (confirmDeleteAllGPSDataSheetState.isVisible) {
-                ModalBottomSheet(
-                    onDismissRequest = {
-                        coroutineScope.launch { confirmDeleteAllGPSDataSheetState.hide() }
-                    },
-                    sheetState = confirmDeleteAllGPSDataSheetState
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp)
-                    ) {
-                        Text("⚠️ Alle GPS Daten Löschen", style = MaterialTheme.typography.titleMedium)
-                        Text("Möchtest du ALLE GPS Daten löschen? Damit sind werden alle GPS Daten auf dem Server gelöscht und steht unwiederuflich nicht mehr zur verfügung!", modifier = Modifier.padding(top = 8.dp))
-                        Spacer(Modifier.height(16.dp))
-                        Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
-                            Button(
-                                onClick = {
-                                    coroutineScope.launch { confirmDeleteAllGPSDataSheetState.hide() }
-                                }
-                            ) { Text(stringResource(id = R.string.cancel)) }
-
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            Button(
-                                onClick = {
-                                    isSubmitting = true
-                                    deleteAllGPSData(serverApiURL, token, locationDao) { success, message ->
+                                    deleteAllAreas(serverApiURL, token, areaDao) { success, message ->
                                         Log.d("ManageTracksOverviewScreen", "Lösche Alle Daten: $success – $message")
                                         resultMessage = message
                                         resultSuccess = success
                                         coroutineScope.launch {
-                                            confirmDeleteAllGPSDataSheetState.hide()
+                                            confirmDeleteAllAreasSheetState.hide()
                                             resultSheetState.show()
                                         }
                                         isSubmitting = false
                                     }
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                            ) { Text("Alle GPS-Daten Löschen") }
+                            ) { Text("Alle Flächen Löschen") }
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-package com.rettungshundeEinsatzApp.functions.areas
+package com.rettungshundeEinsatzApp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,7 +15,7 @@ class AreaViewModel(private val areaDao: AreaDao) : ViewModel() {
         .getAllAreasWithCoordinatesFlow() // <-- Funktion im DAO, die Flow zurückgibt
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Lazily,
+            started = SharingStarted.Companion.Lazily,
             initialValue = emptyList()
         )
 

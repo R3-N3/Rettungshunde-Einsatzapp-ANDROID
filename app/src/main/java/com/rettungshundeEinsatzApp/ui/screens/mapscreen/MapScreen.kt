@@ -38,7 +38,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Contacts
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShareLocation
@@ -49,37 +48,38 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.ManageAccounts
-import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.filled.Texture
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rettungshundeEinsatzApp.activity.ContactActivity
 import com.rettungshundeEinsatzApp.activity.ManageUsersOverviewActivity
-import com.rettungshundeEinsatzApp.activity.NewUserActivity
 import com.rettungshundeEinsatzApp.activity.SettingsActivity
 import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataProvider
 import com.rettungshundeEinsatzApp.functions.calculatePolygonArea
-import com.rettungshundeEinsatzApp.functions.deleteAllGPSData
-import com.rettungshundeEinsatzApp.functions.deleteMyGPSData
 import com.rettungshundeEinsatzApp.functions.downloadAllGpsLocations
 import com.rettungshundeEinsatzApp.functions.downloadAllUserData
 import com.rettungshundeEinsatzApp.service.myLocation.MyLocationStatus
 import com.rettungshundeEinsatzApp.viewmodel.AllTracksViewModel
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.AddBox
+import androidx.compose.material.icons.filled.Route
+import androidx.compose.material.icons.filled.Square
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -93,6 +93,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.core.content.edit
+import com.rettungshundeEinsatzApp.activity.ManageAreaOverviewActivity
 import com.rettungshundeEinsatzApp.activity.ManageTracksOverviewActivity
 import com.rettungshundeEinsatzApp.activity.ReportActivity
 import com.rettungshundeEinsatzApp.database.area.AreaCoordinateEntity
@@ -100,7 +101,7 @@ import com.rettungshundeEinsatzApp.database.area.AreaDatabase
 import com.rettungshundeEinsatzApp.database.area.AreaEntity
 import com.rettungshundeEinsatzApp.functions.areas.ApiService
 import com.rettungshundeEinsatzApp.functions.areas.AreaRepository
-import com.rettungshundeEinsatzApp.functions.areas.AreaViewModel
+import com.rettungshundeEinsatzApp.viewmodel.AreaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -125,12 +126,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val viewModel: MyTrackViewModel = viewModel(factory = MyTrackViewModel.Factory(myLocationDatabase.locationDao()))
     val myLocations by viewModel.locations.collectAsState()
     val locationToMGRSConverter = MyLocationLatLongToMGRS()
-    var dialogInfoAndConfirm by remember { mutableStateOf(false) }
-    var dialogMod by remember { mutableIntStateOf(0) }
-    var dialogIsSubmitting by remember { mutableStateOf(false) }
-    var dialogShowResult by remember { mutableStateOf(false) }
-    var resultMessage by remember { mutableStateOf("") }
-    var resultSuccess by remember { mutableStateOf(false) }
     val db = AllUserDataProvider.getDatabase(context)
     val locationDao = db.allUsersLocationsDao()
     val userDao = db.allUserDataDao()
@@ -143,18 +138,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val navBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
-    val dialogInfoAndConfirmTitle = when (dialogMod) {
-        1 -> stringResource(id = R.string.dialog_delete_my_GPS_data_title)
-        2 -> stringResource(id = R.string.dialog_delete_all_GPS_data_title)
-        3 -> stringResource(id = R.string.dialog_delete_all_areas_title)
-        else -> stringResource(id = R.string.dialog_invalid_input)
-    }
-    val dialogInfoAndConfirmText = when (dialogMod) {
-        1 -> stringResource(id = R.string.dialog_delete_my_GPS_data_text)
-        2 -> stringResource(id = R.string.dialog_delete_all_GPS_data_text)
-        3 -> stringResource(id = R.string.dialog_delete_all_areas_text)
-        else -> stringResource(id = R.string.dialog_invalid_input)
-    }
     val areaDatabase = AreaDatabase.getDatabase(context)
     val areaDao = areaDatabase.areaDao()
     val retrofit = Retrofit.Builder()
@@ -363,7 +346,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Texture,
+                                imageVector = Icons.Default.AddBox,
                                 contentDescription = stringResource(id = R.string.add_area)
                             )
                         }
@@ -439,9 +422,14 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             }
                         }
                     ) {
-                        Icon(
-                            imageVector = if (gpsActive || gpsIsRunningPref) Icons.Default.Stop else Icons.Default.PlayArrow,
-                            contentDescription = if (gpsActive) stringResource(id = R.string.stop_gps_tracking) else stringResource(id = R.string.start_gps_tracking)
+                        PulsingIcon(
+                            icon = Icons.Default.ShareLocation,
+                            contentDescription = if (gpsActive || gpsIsRunningPref)
+                                stringResource(id = R.string.stop_gps_tracking)
+                            else
+                                stringResource(id = R.string.start_gps_tracking),
+                            pulse = gpsActive || gpsIsRunningPref,
+                            activeColor = Color.Red
                         )
                     }
 
@@ -561,7 +549,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                         .verticalScroll(rememberScrollState())
                 ) {
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(30.dp))
 
                     Text(
                         stringResource(id = R.string.my_position),
@@ -569,25 +557,33 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                         color = MaterialTheme.colorScheme.onBackground
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    //Spacer(modifier = Modifier.height(5.dp))
+
                     Text(
                         stringResource(id = R.string.geographic_coordinates),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onBackground
                     )
+
                     Text(latitude,
                         color = MaterialTheme.colorScheme.onBackground)
+
                     Text(longitude,
                         color = MaterialTheme.colorScheme.onBackground)
+
                     Spacer(modifier = Modifier.height(2.dp))
+
                     Text(
                         stringResource(id = R.string.utm_mgrs),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onBackground
                     )
+
                     Text(utm,
                         color = MaterialTheme.colorScheme.onBackground)
+
                     Spacer(modifier = Modifier.height(2.dp))
+
                     Text(
                         stringResource(id = R.string.accuracy),
                         style = MaterialTheme.typography.labelSmall,
@@ -595,16 +591,19 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                     )
                     Text(accuracy,
                         color = MaterialTheme.colorScheme.onBackground)
+
                     Spacer(modifier = Modifier.height(2.dp))
+
                     Text(
                         stringResource(id = R.string.last_update),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onBackground
                     )
+
                     Text(lastGPSTime,
                         color = MaterialTheme.colorScheme.onBackground)
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(25.dp))
 
                     Text(
                         "Menü",
@@ -612,8 +611,9 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                         color = MaterialTheme.colorScheme.onBackground
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    //Spacer(modifier = Modifier.height(16.dp))
 
+                    // Start/Stop GPS tracking
                     Button(
                         onClick = {
                             if (gpsActive || gpsIsRunningPref) {
@@ -629,9 +629,10 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.ShareLocation,
-                            contentDescription = null
+                        PulsingIcon(
+                            icon = Icons.Default.ShareLocation,
+                            contentDescription = null,
+                            pulse = gpsActive // <- hier entscheidet sich das Pulsieren
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -641,6 +642,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                     Spacer(modifier = Modifier.height(8.dp))
 
+                    // Contacts
                     Button(
                         onClick = {
                             val intent = Intent(context, ContactActivity::class.java)
@@ -661,10 +663,10 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-
+                    // Manage Areas
                     Button(
                         onClick = {
-                            val intent = Intent(context, ReportActivity::class.java)
+                            val intent = Intent(context, ManageAreaOverviewActivity::class.java)
                             context.startActivity(intent)
                         },
                         enabled = true,
@@ -673,21 +675,22 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             .padding(vertical = 4.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Create,
+                            imageVector = Icons.Default.Square,
                             contentDescription = null
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(id = R.string.write_operational_report))
+                        Text("Flächenverwaltung")
                     }
-
-                    Spacer(modifier = Modifier.height(8.dp))
 
                     if (securityLevel > 1) {
 
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Manage Tracks
                         Button(
                             onClick = {
-                                dialogMod = 3
-                                dialogInfoAndConfirm = true
+                                val intent = Intent(context, ManageTracksOverviewActivity::class.java)
+                                context.startActivity(intent)
                             },
                             enabled = true,
                             modifier = Modifier
@@ -695,19 +698,19 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                                 .padding(vertical = 4.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.DeleteForever,
+                                imageVector = Icons.Default.Route,
                                 contentDescription = null
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(id = R.string.delete_all_areas))
+                            Text("Trackverwaltung")
                         }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
                     }
 
                     if (securityLevel > 2) {
 
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Manage Users
                         Button(
                             onClick = {
                                 val intent = Intent(context, ManageUsersOverviewActivity::class.java)
@@ -726,44 +729,27 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             Text(stringResource(id = R.string.settings_manage_users))
                         }
 
-                        Button(
-                            onClick = {
-                                val intent = Intent(context, ManageTracksOverviewActivity::class.java)
-                                context.startActivity(intent)
-                            },
-                            enabled = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ManageAccounts,
-                                contentDescription = null
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Trackverwaltung")
-                        }
+                    }
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                        Button(
-                            onClick = {
-                                val intent = Intent(context, NewUserActivity::class.java)
-                                context.startActivity(intent)
-                            },
-                            enabled = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.PersonAdd,
-                                contentDescription = null
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(id = R.string.settings_create_new_user))
-                        }
-
+                    // Write Operation Report
+                    Button(
+                        onClick = {
+                            val intent = Intent(context, ReportActivity::class.java)
+                            context.startActivity(intent)
+                        },
+                        enabled = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Create,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(id = R.string.write_operational_report))
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -791,122 +777,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
             }
         }
 
-        if (dialogInfoAndConfirm) {
-            AlertDialog(
-                onDismissRequest = {},
-                title = {Text(dialogInfoAndConfirmTitle)},
-                text = {Text(dialogInfoAndConfirmText)},
-                confirmButton = {
-                    Button(onClick = {
-                        dialogInfoAndConfirm = false
-                        when (dialogMod) {
-                            1 -> {
-                                dialogIsSubmitting = true
-                                deleteMyGPSData(context) { success, message ->
-                                    resultMessage = message
-                                    resultSuccess = success
-                                    dialogIsSubmitting = false
-                                    dialogShowResult = true
-                                }
-                            }
-
-                            2 -> {
-                                dialogIsSubmitting = true
-                                deleteAllGPSData(serverApiURL, token, locationDao) { success, message ->
-                                    resultMessage = message
-                                    resultSuccess = success
-                                    dialogIsSubmitting = false
-                                    dialogShowResult = true
-                                }
-                            }
-
-                            3 -> {
-                                dialogIsSubmitting = true
-                                dialogIsSubmitting = false
-                                dialogShowResult = true
-
-                            }
-
-                            else -> {
-                                // optional: Logging oder Fallback
-                            }
-                        }
-
-
-                    }) {
-                        Text(stringResource(id = R.string.confirm))
-                    }
-                },
-                dismissButton = {
-                    OutlinedButton(onClick = {
-                        dialogMod = 0
-                        dialogInfoAndConfirm = false
-                    }) {
-                        Text(stringResource(id = R.string.cancel))
-                    }
-                }
-            )
-        }
-
-        if (dialogIsSubmitting) {
-            AlertDialog(
-                onDismissRequest = {},
-                confirmButton = {},
-                title = { Text(stringResource(id = R.string.please_wait)) },
-                text = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        CircularProgressIndicator()
-                        Text(stringResource(id = R.string.in_progress_points))
-                    }
-                }
-            )
-        }
-
-        if (dialogShowResult) {
-            AlertDialog(
-                onDismissRequest = { dialogShowResult = false },
-                confirmButton = {
-                    Button(onClick = {
-                        dialogMod = 0
-                        dialogShowResult = false
-                    }) {
-                        Text("OK")
-                    }
-                },
-                title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (resultSuccess) Icons.Filled.CheckCircle else Icons.Filled.Error,
-                            contentDescription = null,
-                            tint = if (resultSuccess) Color(0xFF4CAF50) else Color.Red
-                        )
-
-                        Text(
-                            text = if (resultSuccess) stringResource(id = R.string.success) else stringResource(id = R.string.failed)
-                        )
-                    }
-                },
-                text = {
-                    if(dialogMod == 1 && resultSuccess){
-                        Text(stringResource(id = R.string.dialog_delete_my_GPS_data_result))
-                    }else if(dialogMod == 2 && resultSuccess){
-                        Text(stringResource(id = R.string.dialog_delete_all_GPS_data_result))
-                    }else if(dialogMod == 3 && resultSuccess){
-                        Text(stringResource(id = R.string.dialog_delete_all_areas_result))
-                    }else {
-                        Text("${stringResource(id = R.string.dialog_invalid_input_or_error)}: $resultMessage " )
-                    }
-
-                }
-            )
-        }
         if (dialogShowSaveArea) {
             AlertDialog(
                 onDismissRequest = { dialogShowSaveArea = false },
@@ -1000,6 +870,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                 }
             )
         }
+
     }
 }
 
@@ -1026,4 +897,34 @@ fun getColoredVectorMarker(context: Context, drawableRes: Int, color: Int): Draw
         DrawableCompat.setTint(wrapped, color)
         wrapped
     }
+}
+
+@Composable
+fun PulsingIcon(
+    icon: ImageVector,    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    pulse: Boolean = false,
+    activeColor: Color = Color.Red, // neu: aktive Farbe
+    inactiveColor: Color = LocalContentColor.current // Standardfarbe
+) {
+    val scale by rememberInfiniteTransition(label = "pulseTransition")
+        .animateFloat(
+            initialValue = 1f,
+            targetValue = if (pulse) 1.2f else 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(600, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "pulseScale"
+        )
+
+    Icon(
+        imageVector = icon,
+        contentDescription = contentDescription,
+        tint = if (pulse) activeColor else inactiveColor, // <--- Farbe wechselt hier
+        modifier = modifier.graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        }
+    )
 }
