@@ -38,6 +38,14 @@ fun resetPassword(
             response.use {
                 if (!it.isSuccessful) throw IOException("Unexpected Code: ${it.code}")
                 val jsonData = it.body?.string() ?: "{}"
+
+                Log.d("resetPassword", "HTTP response body: $jsonData")
+
+                if (jsonData.isBlank()) {
+                    onResult(false, "Leere Antwort vom Server.")
+                    return@use
+                }
+
                 val jsonObject = JSONObject(jsonData)
                 val status = jsonObject.get("status")
                 val message = jsonObject.get("message").toString()
