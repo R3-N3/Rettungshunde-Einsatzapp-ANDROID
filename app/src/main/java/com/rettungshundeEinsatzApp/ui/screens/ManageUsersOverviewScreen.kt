@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Warning
@@ -97,7 +98,7 @@ fun ManageUsersOverviewScreen(
                     title = { Text(stringResource(id = R.string.settings_manage_users)) },
                     navigationIcon = {
                         IconButton(onClick = {  }) {
-                            Icon(Icons.Default.Groups, contentDescription = stringResource(id = R.string.dashboard_bottom_menu_group))
+                            Icon(Icons.Default.ManageAccounts, contentDescription = stringResource(id = R.string.dashboard_bottom_menu_group))
                         }
                     }
                 )

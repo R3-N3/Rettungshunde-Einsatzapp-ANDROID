@@ -8,12 +8,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Contacts
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode.Companion.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataEntity
 import com.rettungshundeEinsatzApp.viewmodel.AllUserProfileViewModel
@@ -57,130 +58,39 @@ fun ContactScreenContent(userList: List<AllUserDataEntity>) {
                 .padding(innerPadding)
                 .padding(start = 16.dp, top = 10.dp, bottom = 0.dp, end = 16.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
-                Text(stringResource(id = R.string.name), modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium)
-                Text(stringResource(id = R.string.radio_call_name), modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium)
-                Text(stringResource(id = R.string.phonenumber), modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium)
-            }
-
-            HorizontalDivider()
-
-            LazyColumn {
                 items(userList) { user ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(user.username, modifier = Modifier.weight(1f))
-                        Text(user.radiocallname, modifier = Modifier.weight(1f))
+                    Column(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)) {
+
+                        Text(user.username, style = MaterialTheme.typography.titleMedium)
+                        Text("Funkrufname: ${user.radiocallname}")
                         Text(
-                            text = user.phonenumber,
+                            text = "${user.phonenumber}",
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
-                                .weight(1f)
+                                .padding(top = 4.dp)
                                 .clickable {
-                                    val intent = Intent(Intent.ACTION_DIAL).apply {
-                                        data = "tel:${user.phonenumber}".toUri()
+                                    val dialIntent = Intent(Intent.ACTION_DIAL).apply {
+                                        data = android.net.Uri.parse("tel:${user.phonenumber}")
                                     }
-                                    context.startActivity(intent)
+                                    context.startActivity(dialIntent)
                                 }
                         )
+
+                        HorizontalDivider(
+                            modifier = Modifier.padding(top = 16.dp),
+                            thickness = DividerDefaults.Thickness
+                        )
                     }
-                    HorizontalDivider()
                 }
             }
         }
     }
-}
-
-@Preview(name = "Light Mode", showBackground = true)
-@Composable
-fun ContactScreenPreviewLight() {
-    val dummyList = listOf(
-        AllUserDataEntity(
-            id = 1,
-            username = "Max ",
-            email = "max@example.com",
-            phonenumber = "+49 123 456789",
-            securitylevel = 2,
-            radiocallname = "28-123",
-            trackColor = "#ff00cc"
-        ),
-        AllUserDataEntity(
-            id = 2,
-            username = "Anna ",
-            email = "anna@example.com",
-            phonenumber = "0160 987654",
-            securitylevel = 1,
-            radiocallname = "28-456",
-            trackColor = null
-        )
-    )
-
-    ReaAppTheme{ContactScreenContent(userList = dummyList)}
-
-}
-
-@Preview(name = "Dark Mode", showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun ContactScreenPreviewDark() {
-    val dummyList = listOf(
-        AllUserDataEntity(
-            id = 1,
-            username = "Max ",
-            email = "max@example.com",
-            phonenumber = "+49 123 456789",
-            securitylevel = 2,
-            radiocallname = "28-123",
-            trackColor = "#ff00cc"
-        ),
-        AllUserDataEntity(
-            id = 2,
-            username = "Anna ",
-            email = "anna@example.com",
-            phonenumber = "0160 987654",
-            securitylevel = 1,
-            radiocallname = "28-456",
-            trackColor = null
-        )
-    )
-
-    ReaAppTheme{ContactScreenContent(userList = dummyList)}
-
-}
-
-@Preview(name = "Large Font", fontScale = 1.5f, showBackground = true)
-@Composable
-fun ContactScreenPreviewLarge() {
-    val dummyList = listOf(
-        AllUserDataEntity(
-            id = 1,
-            username = "Max ",
-            email = "max@example.com",
-            phonenumber = "+49 123 456789",
-            securitylevel = 2,
-            radiocallname = "28-123",
-            trackColor = "#ff00cc"
-        ),
-        AllUserDataEntity(
-            id = 2,
-            username = "Anna ",
-            email = "anna@example.com",
-            phonenumber = "0160 987654",
-            securitylevel = 1,
-            radiocallname = "28-456",
-            trackColor = null
-        )
-    )
-
-
-    ReaAppTheme{ContactScreenContent(userList = dummyList)}
-
 }

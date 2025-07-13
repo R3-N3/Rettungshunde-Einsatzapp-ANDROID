@@ -19,7 +19,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Square
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -93,7 +95,22 @@ fun ManageTracksOverviewScreen() {
 
     ReaAppTheme {
         Scaffold(
-            topBar = { TopAppBar(title = { Text("Alle Tracks") }) }
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.Route,
+                                contentDescription = stringResource(id = R.string.contacts)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text("Trackverwaltung")
+                        }
+                    },
+                )
+                 }
         ) { paddingValues ->
 
             LazyColumn(

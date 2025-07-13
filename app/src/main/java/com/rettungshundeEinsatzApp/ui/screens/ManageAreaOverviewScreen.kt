@@ -18,7 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Contacts
 import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Square
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -82,7 +84,22 @@ fun ManageAreaOverviewScreen() {
 
     ReaAppTheme {
         Scaffold(
-            topBar = { TopAppBar(title = { Text("Alle Flächen") }) }
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.Square,
+                                contentDescription = stringResource(id = R.string.contacts)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text("Flächenverwaltung")
+                        }
+                    },
+                )
+            }
         ) { paddingValues ->
 
             LazyColumn(
