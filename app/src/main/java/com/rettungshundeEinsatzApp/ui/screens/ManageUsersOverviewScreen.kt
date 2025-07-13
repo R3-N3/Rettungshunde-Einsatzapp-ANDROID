@@ -18,13 +18,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
@@ -32,7 +32,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -50,15 +52,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rettungshundeEinsatzApp.R
+import com.rettungshundeEinsatzApp.activity.EditMyUserDataActivity
 import com.rettungshundeEinsatzApp.activity.ManageUserSingleViewActivity
 import com.rettungshundeEinsatzApp.activity.ManageUsersOverviewActivity
 import com.rettungshundeEinsatzApp.activity.NewUserActivity
-import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataEntity
 import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataProvider
 import com.rettungshundeEinsatzApp.functions.deleteUser
 import com.rettungshundeEinsatzApp.functions.downloadAllUserData
@@ -107,144 +109,181 @@ fun ManageUsersOverviewScreen(
                     .padding(innerPadding)
                     .padding(start =16.dp, top = 10.dp, bottom = 16.dp, end = 16.dp)
             ) {
-
-                Button(
-                    onClick = {
-                        val intent = Intent(context, NewUserActivity::class.java)
-                        context.startActivity(intent)
-                    },
-                    enabled = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.PersonAdd,
-                        contentDescription = null
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(id = R.string.settings_create_new_user))
-                }
-
-
                 LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 
-                    items(userList) { user ->
+                    item{
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
+                                .padding(8.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        ){
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Button(
+                                    onClick = {
+                                        val intent = Intent(context, NewUserActivity::class.java)
+                                        context.startActivity(intent)
+                                    },
+                                    enabled = true,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.PersonAdd,
+                                        contentDescription = null
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(stringResource(id = R.string.settings_create_new_user))
+                                }
+                            }
+                        }
+                    }
+                    item {
+                        Text(
+                            text = "Alle Benutzer",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 32.dp, start = 16.dp, bottom = 8.dp)
+                        )
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                            ) {
-                                Text(
-                                    text = user.username,
-                                    style = MaterialTheme.typography.titleMedium
-                                )
+                            Column {
+                                userList.forEachIndexed { index, user ->
+                                    Column(modifier = Modifier.padding(8.dp)) {
 
-                                Text(
-                                    text = "ID: ${user.id}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
 
-                                Text(
-                                    text = stringResource(id = R.string.radio_call_name) + ": ${user.radiocallname}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(bottom = 0.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Person,
+                                                    contentDescription = null
+                                                )
+                                                Text(
+                                                    text = user.username,
+                                                    fontSize = 22.sp,
+                                                    modifier = Modifier.padding(start = 8.dp)
+                                                )
+                                            }
 
-                                Text(
-                                    text = stringResource(id = R.string.email) + ": ${user.email}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-
-                                val secLevel = when (user.securitylevel) {
-                                    1 -> ": " + stringResource(id = R.string.security_level_ek)
-                                    2 -> ": " + stringResource(id = R.string.security_level_zf)
-                                    3 -> ": " + stringResource(id = R.string.security_level_admin)
-                                    else -> ": unknown"
-                                }
-
-                                Text(
-                                    text = stringResource(id = R.string.security_level) + secLevel,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = stringResource(id = R.string.track_color) + ": ${user.trackColor}",
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-
-                                    Spacer(modifier = Modifier.width(8.dp))
-
-                                    user.trackColor?.let { colorCode ->
-                                        runCatching {
-                                            Color(colorCode.toColorInt())
-                                        }.getOrNull()?.let { parsedColor ->
-                                            Box(
+                                            Row(
                                                 modifier = Modifier
-                                                    .padding(start = 4.dp)
-                                                    .size(20.dp)
-                                                    .background(parsedColor, shape = MaterialTheme.shapes.small)
-                                                    .border(1.dp, Color.Gray, shape = MaterialTheme.shapes.small)
-                                            )
+                                                    .fillMaxWidth()
+                                                    .padding(top = 0.dp),
+                                                horizontalArrangement = Arrangement.End
+                                            ) {
+                                                IconButton(onClick = {
+                                                    val intentManageSingleUser = Intent(context, ManageUserSingleViewActivity::class.java)
+                                                    intentManageSingleUser.putExtra("username", user.username)
+                                                    intentManageSingleUser.putExtra("email", user.email)
+                                                    intentManageSingleUser.putExtra("radioCallName", user.radiocallname)
+                                                    intentManageSingleUser.putExtra("securityLevel", user.securitylevel.toString())
+                                                    intentManageSingleUser.putExtra("trackColor", user.trackColor.toString())
+                                                    intentManageSingleUser.putExtra("phoneNumber", user.phonenumber)
+                                                    intentManageSingleUser.putExtra("id", user.id.toString())
+                                                    context.startActivity(intentManageSingleUser)
+                                                    finishActivity()
+                                                }) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Edit,
+                                                        contentDescription = stringResource(id = R.string.edit_user),
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+
+                                                IconButton(onClick = {
+                                                    if (user.username == myUserName) {
+                                                        showDeleteNotPossibleDialog = true
+                                                    } else {
+                                                        toDeleteUserName = user.username
+                                                        showDeleteUserDialog = true
+                                                    }
+                                                }) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Delete,
+                                                        contentDescription = stringResource(id = R.string.delete_user),
+                                                        tint = MaterialTheme.colorScheme.error
+                                                    )
+                                                }
+                                            }
                                         }
+
+                                        Text(
+                                            text = "ID: ${user.id}",
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+
+                                        Text(
+                                            text = stringResource(id = R.string.radio_call_name) + ": ${user.radiocallname}",
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+
+                                        Text(
+                                            text = stringResource(id = R.string.email) + ": ${user.email}",
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+
+                                        val secLevel = when (user.securitylevel) {
+                                            1 -> ": " + stringResource(id = R.string.security_level_ek)
+                                            2 -> ": " + stringResource(id = R.string.security_level_zf)
+                                            3 -> ": " + stringResource(id = R.string.security_level_admin)
+                                            else -> ": unknown"
+                                        }
+
+                                        Text(
+                                            text = stringResource(id = R.string.security_level) + secLevel,
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = stringResource(id = R.string.track_color) + ": ${user.trackColor}",
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+
+                                            Spacer(modifier = Modifier.width(8.dp))
+
+                                            user.trackColor?.let { colorCode ->
+                                                runCatching {
+                                                    Color(colorCode.toColorInt())
+                                                }.getOrNull()?.let { parsedColor ->
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .padding(start = 4.dp)
+                                                            .size(20.dp)
+                                                            .background(parsedColor, shape = MaterialTheme.shapes.small)
+                                                            .border(1.dp, Color.Gray, shape = MaterialTheme.shapes.small)
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        Text(
+                                            text = stringResource(id = R.string.phonenumber) + ": ${user.phonenumber}",
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
                                     }
-                                }
 
-                                Text(
-                                    text = stringResource(id = R.string.phonenumber) + ": ${user.phonenumber}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 0.dp),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                IconButton(onClick = {
-                                    val intentManageSingleUser = Intent(context, ManageUserSingleViewActivity::class.java)
-                                    intentManageSingleUser.putExtra("username",user.username)
-                                    intentManageSingleUser.putExtra("email", user.email)
-                                    intentManageSingleUser.putExtra("radioCallName",user.radiocallname)
-                                    intentManageSingleUser.putExtra("securityLevel", user.securitylevel.toString())
-                                    intentManageSingleUser.putExtra("trackColor", user.trackColor.toString())
-                                    intentManageSingleUser.putExtra("phoneNumber",user.phonenumber)
-                                    intentManageSingleUser.putExtra("id",user.id.toString())
-                                    context.startActivity(intentManageSingleUser)
-                                    finishActivity()
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = stringResource(id = R.string.edit_user),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-
-                                IconButton(onClick = {
-                                    if(user.username == myUserName){
-                                        showDeleteNotPossibleDialog = true
+                                    if (index < userList.size - 1) {
+                                        HorizontalDivider(
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                            thickness = DividerDefaults.Thickness, color = Color.LightGray
+                                        )
                                     }
-                                    else{
-                                        toDeleteUserName = user.username
-                                        showDeleteUserDialog = true
-                                    }
-
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = stringResource(id = R.string.delete_user),
-                                        tint = MaterialTheme.colorScheme.error
-                                    )
                                 }
                             }
                         }
@@ -404,134 +443,6 @@ fun ManageUsersOverviewScreen(
                         )
                     }
                 )
-            }
-        }
-    }
-}
-
-
-
-// ####################### Tp preview the activity Design ######################################
-@Preview(name = "Light Mode", showBackground = true)
-@Composable
-fun PreviewManageUsersOverviewScreenLight() {
-    val dummyUsers = listOf(
-        AllUserDataEntity(
-            id = 1,
-            username = "max.doe",
-            email = "max@example.com",
-            phonenumber = "0123456789",
-            securitylevel = 2,
-            radiocallname = "28/MM",
-            trackColor = "#FF0000"
-        ),
-        AllUserDataEntity(
-            id = 2,
-            username = "jane.doe",
-            email = "jane@example.com",
-            phonenumber = "0987654321",
-            securitylevel = 1,
-            radiocallname = "28/JD",
-            trackColor = "#00FF00"
-        )
-    )
-
-    ReaAppTheme {
-        ManageUsersOverviewPreviewScreen(userList = dummyUsers)
-    }
-}
-
-@Preview(name = "Dark Mode", showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun PreviewManageUsersOverviewScreenDark() {
-    val dummyUsers = listOf(
-        AllUserDataEntity(
-            id = 1,
-            username = "max.doe",
-            email = "max@example.com",
-            phonenumber = "0123456789",
-            securitylevel = 2,
-            radiocallname = "28/MM",
-            trackColor = "#FF0000"
-        ),
-        AllUserDataEntity(
-            id = 2,
-            username = "jane.doe",
-            email = "jane@example.com",
-            phonenumber = "0987654321",
-            securitylevel = 1,
-            radiocallname = "28/JD",
-            trackColor = "#00FF00"
-        )
-    )
-
-    ReaAppTheme {
-        ManageUsersOverviewPreviewScreen(userList = dummyUsers)
-    }
-}
-
-@Preview(name = "Large Font", fontScale = 1.5f, showBackground = true)
-@Composable
-fun PreviewManageUsersOverviewScreenLarge() {
-    val dummyUsers = listOf(
-        AllUserDataEntity(
-            id = 1,
-            username = "max.doe",
-            email = "max@example.com",
-            phonenumber = "0123456789",
-            securitylevel = 2,
-            radiocallname = "28/MM",
-            trackColor = "#FF0000"
-        ),
-        AllUserDataEntity(
-            id = 2,
-            username = "jane.doe",
-            email = "jane@example.com",
-            phonenumber = "0987654321",
-            securitylevel = 1,
-            radiocallname = "28/JD",
-            trackColor = "#00FF00"
-        )
-    )
-
-    ReaAppTheme {
-        ManageUsersOverviewPreviewScreen(userList = dummyUsers)
-    }
-}
-
-@Composable
-fun ManageUsersOverviewPreviewScreen(userList: List<AllUserDataEntity>) {
-    LazyColumn(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(userList) { user ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = user.username, style = MaterialTheme.typography.titleMedium)
-                    Text(text = "Radio Call name: ${user.radiocallname}")
-                    Text(text = "E-Mail: ${user.email}")
-                    Text(text = "phone number: ${user.phonenumber}")
-                    Text(text = "Level: ${user.securitylevel}")
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = "Track-Color: ${user.trackColor}")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        runCatching { Color(user.trackColor?.toColorInt() ?: 0) }
-                            .getOrNull()?.let { parsedColor ->
-                                Box(
-                                    modifier = Modifier
-                                        .size(20.dp)
-                                        .background(parsedColor)
-                                        .border(1.dp, Color.Gray)
-                                )
-                            }
-                    }
-                }
             }
         }
     }
