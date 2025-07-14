@@ -503,8 +503,9 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                     Text(
                         text = "${stringResource(id = R.string.area)}: %.1f m²".format(areaM2),
                         modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(16.dp)
+                            .align(Alignment.BottomCenter)
+                            //.padding(top = 80.dp)
+                            .padding(46.dp)
                             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f))
                             .padding(8.dp),
                         color = MaterialTheme.colorScheme.onSurface
