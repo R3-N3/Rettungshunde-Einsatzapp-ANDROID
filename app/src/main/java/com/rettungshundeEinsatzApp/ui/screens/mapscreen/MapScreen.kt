@@ -485,6 +485,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                         onClick = {
                             if (areaPoints.isNotEmpty()) {
                                 areaPoints.removeAt(areaPoints.lastIndex)
+                                areaPolygon.setPoints(areaPoints.toList())
                             }
                             if (areaCornerMarkers.isNotEmpty()) {
                                 areaCornerMarkers.removeAt(areaCornerMarkers.lastIndex)
