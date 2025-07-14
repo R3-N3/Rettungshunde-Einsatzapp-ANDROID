@@ -58,6 +58,7 @@ import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataA
 import com.rettungshundeEinsatzApp.database.mylocallocation.MyLocationDatabase
 import com.rettungshundeEinsatzApp.functions.deleteAllGPSData
 import com.rettungshundeEinsatzApp.functions.deleteMyGPSData
+import com.rettungshundeEinsatzApp.functions.exportAndShareGPX
 import com.rettungshundeEinsatzApp.ui.ReaAppTheme
 import com.rettungshundeEinsatzApp.viewmodel.MyTrackViewModel
 import com.rettungshundeEinsatzApp.viewmodel.UsersWithTracksViewModel
@@ -154,8 +155,12 @@ fun ManageTracksOverviewScreen() {
                         }
 
                         Button(
-                            onClick = { },
-                            enabled = false,
+                            onClick = {
+                                coroutineScope.launch {
+                                    exportAndShareGPX(context)
+                                }
+                            },
+                            enabled = true,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp),
