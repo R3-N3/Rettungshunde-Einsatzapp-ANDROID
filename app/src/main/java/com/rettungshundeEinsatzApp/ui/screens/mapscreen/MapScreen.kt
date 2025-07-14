@@ -684,7 +684,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                         Text("Flächenverwaltung")
                     }
 
-                    if (securityLevel > 1) {
+
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -706,7 +706,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("Trackverwaltung")
                         }
-                    }
+                    
 
                     if (securityLevel > 2) {
 
