@@ -12,7 +12,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -71,14 +70,14 @@ fun ContactScreenContent(userList: List<AllUserDataEntity>) {
                         Text(user.username, style = MaterialTheme.typography.titleMedium)
                         Text("Funkrufname: ${user.radiocallname}")
                         Text(
-                            text = "${user.phonenumber}",
+                            text = user.phonenumber,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .padding(top = 4.dp)
                                 .clickable {
                                     val dialIntent = Intent(Intent.ACTION_DIAL).apply {
-                                        data = android.net.Uri.parse("tel:${user.phonenumber}")
+                                        data = "tel:${user.phonenumber}".toUri()
                                     }
                                     context.startActivity(dialIntent)
                                 }

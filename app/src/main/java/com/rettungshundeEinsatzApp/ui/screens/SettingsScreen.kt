@@ -95,7 +95,7 @@ fun SettingsScreen() {
         "1" -> stringResource(id = R.string.security_level_ek)
         "2" -> stringResource(id = R.string.security_level_zf)
         "3" -> stringResource(id = R.string.security_level_admin)
-        else -> "Fehler"
+        else -> stringResource(id = R.string.error)
     }
 
     ReaAppTheme {
@@ -120,11 +120,11 @@ fun SettingsScreen() {
                     .padding(innerPadding)
                     .padding(horizontal = 16.dp, vertical = 0.dp)
             ) {
-                // Card 1: Benutzerdaten
+                // Card 1: User Data
                 item {
 
                     Text(
-                        text = "Meine Benutzerdaten",
+                        text = stringResource(id = R.string.my_user_data),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 0.dp, start = 16.dp, bottom = 8.dp)
                     )
@@ -235,7 +235,7 @@ fun SettingsScreen() {
                         Column(modifier = Modifier.padding(16.dp)) {
 
                             Text(
-                                text = "Impressum",
+                                text = stringResource(id = R.string.imprint),
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier
                                     .clickable {
@@ -255,7 +255,7 @@ fun SettingsScreen() {
                             )
 
                             Text(
-                                text = "Datenschutzerklärung",
+                                text = stringResource(id = R.string.privacy_policy),
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier
                                     .clickable {
@@ -275,7 +275,7 @@ fun SettingsScreen() {
                 // Card 2: Buttons
                 item {
                     Text(
-                        text = "Abmelden",
+                        text = stringResource(id = R.string.logout),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 0.dp, start = 16.dp, bottom = 8.dp)
                     )

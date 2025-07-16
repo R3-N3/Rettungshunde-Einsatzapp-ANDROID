@@ -3,5 +3,5 @@ package com.rettungshundeEinsatzApp.functions.areas
 data class DownloadAreaPoint(
     val lat: Double,
     val lon: Double,
-    val order_index: Int
+    val orderIndex: Int
 )

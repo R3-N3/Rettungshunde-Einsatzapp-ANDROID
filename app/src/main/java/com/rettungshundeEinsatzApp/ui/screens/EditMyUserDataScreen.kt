@@ -87,7 +87,6 @@ fun EditMyUserDataScreen(
     }
     val myTrackColor = sharedPreferences.getString("myTrackColor", "#FF0000FF") ?: "#FF0000FF"
     Log.d("test",myTrackColor)
-    var isDirty by rememberSaveable { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val confirmSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val resultSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -138,7 +137,6 @@ fun EditMyUserDataScreen(
                     value = username,
                     onValueChange = {
                         username = it
-                        isDirty = true
                     },
                     label = { Text(stringResource(id = R.string.username)) },
                     isError = usernameError,
@@ -156,7 +154,6 @@ fun EditMyUserDataScreen(
                     value = email,
                     onValueChange = {
                         email = it
-                        isDirty = true
                     },
                     label = { Text(stringResource(id = R.string.email)) },
                     isError = emailError,
@@ -174,7 +171,6 @@ fun EditMyUserDataScreen(
                     value = phoneNumber,
                     onValueChange = {
                         phoneNumber = it
-                        isDirty = true
                     },
                     label = { Text(stringResource(id = R.string.phonenumber)) },
                     isError = phoneNumberError,
@@ -192,7 +188,6 @@ fun EditMyUserDataScreen(
                     value = radioCallName,
                     onValueChange = {
                         radioCallName = it
-                        isDirty = true
                     },
                     label = { Text(stringResource(id = R.string.radio_call_name)) },
                     isError = radioCallNameError,
@@ -210,7 +205,6 @@ fun EditMyUserDataScreen(
                     value = securityLevel,
                     onValueChange = {
                         securityLevel = it
-                        isDirty = true
                     },
                     label = { Text(stringResource(id = R.string.security_level)) },
                     isError = securityLevelError,

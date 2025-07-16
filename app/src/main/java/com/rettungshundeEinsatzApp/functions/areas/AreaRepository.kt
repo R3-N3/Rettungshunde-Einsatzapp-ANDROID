@@ -1,6 +1,8 @@
 package com.rettungshundeEinsatzApp.functions.areas
 
+import android.content.Context
 import android.util.Log
+import com.rettungshundeEinsatzApp.R
 import com.rettungshundeEinsatzApp.database.area.AreaDao
 import com.rettungshundeEinsatzApp.database.area.AreaEntity
 import com.rettungshundeEinsatzApp.database.area.AreaCoordinateEntity
@@ -9,16 +11,17 @@ import kotlinx.coroutines.withContext
 
 class AreaRepository(
     private val apiService: ApiService,
-    private val areaDao: AreaDao
+    private val areaDao: AreaDao,
+    private val context: Context
 ) {
     suspend fun downloadAreas(token: String): Pair<Boolean, String> = withContext(Dispatchers.IO) {
         if (AreaDownloadManager.isDownloadingAreas) {
             Log.d("uploadAreasToServer", "⚠\uFE0F downloadAreas already running")
-            return@withContext Pair(false, "Bereits in Bearbeitung")
+            return@withContext Pair(false, context.getString(R.string.already_in_progress))
         }
 
         AreaDownloadManager.isDownloadingAreas = true
-        Log.d("uploadAreasToServer", "\uD83D\uDFE2 Starte downloadAreasFromServer")
+        Log.d("uploadAreasToServer", "\uD83D\uDFE2 start downloadAreasFromServer")
 
         try {
             val response = apiService.downloadAreas(mapOf("token" to token))
@@ -28,7 +31,6 @@ class AreaRepository(
                 val body = response.body()
                 if (body != null && body.status == "success" && body.data != null) {
 
-                    // ➡️ Room: Löschen + Insert in einer Transaction
                     areaDao.deleteAllAreas()
 
                     body.data.forEach { area ->
@@ -41,58 +43,56 @@ class AreaRepository(
                             )
                         )
 
-                        val coords = area.points.map {
+                        val coordinates = area.points.map {
                             AreaCoordinateEntity(
                                 latitude = it.lat,
                                 longitude = it.lon,
-                                orderIndex = it.order_index,
+                                orderIndex = it.orderIndex,
                                 areaId = areaId.toInt()
                             )
                         }
-                        areaDao.insertCoordinates(coords)
+                        areaDao.insertCoordinates(coordinates)
                     }
 
-                    Log.d("uploadAreasToServer", "✅ Flächen erfolgreich synchronisiert")
+                    Log.d("uploadAreasToServer", "✅ area synced")
                     Pair(true, body.message)
 
                 } else {
-                    Pair(false, body?.message ?: "Unbekannter Fehler")
+                    Pair(false, body?.message ?: context.getString(R.string.unknown_error))
                 }
             } else {
-                Pair(false, "Server Error: ${response.code()}")
+                Pair(false, context.getString(R.string.server_error) + response.code())
             }
 
         } catch (e: Exception) {
             AreaDownloadManager.isDownloadingAreas = false
             Log.e("uploadAreasToServer", "❌ Error: ${e.localizedMessage}")
-            Pair(false, e.localizedMessage ?: "Fehler")
+            Pair(false, e.localizedMessage ?: context.getString(R.string.error))
         }
     }
 
     suspend fun uploadAreas(token: String): Pair<Boolean, String> = withContext(Dispatchers.IO) {
         try {
-            // ➡️ Alle Areas mit uploadedToServer == false laden
             val areasToUpload = areaDao.getAreasNotUploaded()
 
             if (areasToUpload.isEmpty()) {
-                Log.d("uploadAreasToServer", "\uD83D\uDFE1 Keine Flächen zum Hochladen")
-                return@withContext Pair(true, "Keine Flächen zum Hochladen")
+                Log.d("uploadAreasToServer", "\uD83D\uDFE1 no areas to upload")
+                return@withContext Pair(true, context.getString(R.string.no_areas_to_upload))
             }
 
             areasToUpload.forEach { area ->
-                Log.d("uploadAreasToServer", "🟠 AreaDB: ${area.area.title}, Coords: ${area.coordinates.size}")
+                Log.d("uploadAreasToServer", "🟠 AreaDB: ${area.area.title}, Coordinates: ${area.coordinates.size}")
             }
 
-            // ➡️ Mapping
-            val uploadAreas = areasToUpload.map { areaWithCoords ->
+            val uploadAreas = areasToUpload.map { areaWithCoordinates ->
                 UploadArea(
-                    title = areaWithCoords.area.title,
-                    description = areaWithCoords.area.desc,
-                    color = areaWithCoords.area.color,
-                    points = areaWithCoords.coordinates.sortedBy { it.orderIndex }.map { coord ->
+                    title = areaWithCoordinates.area.title,
+                    description = areaWithCoordinates.area.desc,
+                    color = areaWithCoordinates.area.color,
+                    points = areaWithCoordinates.coordinates.sortedBy { it.orderIndex }.map { coordinate ->
                         UploadAreaPoint(
-                            lat = coord.latitude,
-                            lon = coord.longitude
+                            lat = coordinate.latitude,
+                            lon = coordinate.longitude
                         )
                     }
                 )
@@ -103,7 +103,7 @@ class AreaRepository(
                 areas = uploadAreas
             )
 
-            Log.d("uploadAreasToServer", "➡️ Payload zum Hochladen:")
+            Log.d("uploadAreasToServer", "➡️ Payload tu upload:")
             uploadAreas.forEach { area ->
                 Log.d("uploadAreasToServer", "🔹 Area: ${area.title}, Desc: ${area.description}, Color: ${area.color}")
                 area.points.forEach { point ->
@@ -111,33 +111,30 @@ class AreaRepository(
                 }
             }
 
-
-            // ➡️ HTTP POST ausführen
             val response = apiService.uploadAreas(payload)
 
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null && body.status == "success") {
-                    Log.d("uploadAreasToServer", "✅ Flächen erfolgreich hochgeladen: ${body.message}")
+                    Log.d("uploadAreasToServer", "✅ Areas uploaded : ${body.message}")
 
-                    // ➡️ Nach Erfolg: uploadedToServer = true setzen
                     areasToUpload.forEach { area ->
                         areaDao.setAreaUploaded(area.area.id)
                     }
 
                     return@withContext Pair(true, body.message)
                 } else {
-                    Log.e("uploadAreasToServer", "❌ Failure: ${body?.message ?: "Unbekannter Fehler"}")
-                    return@withContext Pair(false, body?.message ?: "Unbekannter Fehler")
+                    Log.e("uploadAreasToServer", "❌ Failure: ${body?.message ?: "Unknown Error"}")
+                    return@withContext Pair(false, body?.message ?: context.getString(R.string.unknown_error))
                 }
             } else {
                 Log.e("uploadAreasToServer", "❌ HTTP Error: ${response.code()}")
-                return@withContext Pair(false, "Serverfehler: ${response.code()}")
+                return@withContext Pair(false, context.getString(R.string.server_error) + response.code())
             }
 
         } catch (e: Exception) {
             Log.e("uploadAreasToServer", "❌ Exception: ${e.localizedMessage}")
-            return@withContext Pair(false, e.localizedMessage ?: "Fehler")
+            return@withContext Pair(false, e.localizedMessage ?: context.getString(R.string.error))
         }
     }
 }

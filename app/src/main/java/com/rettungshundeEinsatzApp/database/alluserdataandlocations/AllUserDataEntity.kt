@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class AllUserDataEntity(
 
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "ID") // real name of colum in mysql database
+    @ColumnInfo(name = "ID")
     val id: Int,
 
     @ColumnInfo(name = "username")

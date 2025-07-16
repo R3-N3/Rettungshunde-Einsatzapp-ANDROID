@@ -4,12 +4,9 @@
     <string name="login">Einloggen</string>
     <string name="logout">Abmelden</string>
     <string name="security_level">Sicherheitslevel</string>
-
     <string name="finish">Fertig</string>
-
     <string name="time">Zeit</string>
     <string name="unknown">Unbekannt</string>
-
     <string name="login_organisation_choice">-Bitte wählen-</string>
     <string name="password_hide">Passwort ausblenden</string>
     <string name="password_show">Passwort anzeigen</string>
@@ -44,21 +41,17 @@
     <string name="login_resetPassword">Passwort zurücksetzen</string>
     <string name="login_check_input">Bitte Eingabe prüfen</string>
     <string name="login_error_toast">Login gescheitert, bitte Eingaben prüfen!</string>
-
     <string name="dashboard_activity_toast_get_user_data_success">Benutzerdaten erfolgreich aktualisiert</string>
     <string name="dashboard_activity_toast_need_new_login">Erneuter Login notwendig</string>
     <string name="toast_connection_error">Verbindungsfehler</string>
     <string name="toast_unknown_error">Unbekannter Fehler</string>
-
     <string name="dashboard_bottom_menu_start">Start</string>
     <string name="dashboard_bottom_menu_map">Karte</string>
     <string name="dashboard_bottom_menu_group">Gruppe</string>
     <string name="dashboard_bottom_menu_settings">Einstellungen</string>
-
     <string name="new_user_activity_title">Neuer Benutzer</string>
     <string name="new_user_activity_valid_Dialog_title">Benutzer erstellen</string>
     <string name="new_user_activity_valid_Dialog_text">"Sind Sie sicher, dass die Eingaben stimmen? \n \nBei Bestätigung wird der neue Benutzer erstellt und an diesem eine automatische E-Mail mit den Zugangsdaten zu REA gesendet. "</string>
-
     <string name="settings_my_pfofile_title">👤 Mein Profil</string>
     <string name="settings_zugfuhrer_function_title">🧑‍✈️ Zugführer Funktionen</string>
     <string name="settings_admin_function_title">🧰 Administrator Funktionen</string>
@@ -67,18 +60,14 @@
     <string name="settings_manage_users">Benutzer verwalten</string>
     <string name="delete_all_gps_data_dialog_title">Alle GPS Daten löschen?</string>
     <string name="delete_all_gps_data_dialog_text">Sind Sie sicher, dass Sie alle GPS-Daten auf dem Server löschen wollen? \n \nBei Bestätigung werden die auf dem Server gespeicherten GPS-Daten unwiederuflich gelöscht. Dieser Prozess kann nicht Rückgängig gemacht werden.</string>
-
     <string name="dialog_delete_user_not_possible_title">Löschen nicht möglich</string>
     <string name="dialog_delete_user_not_possible_text">Man kann sich selbst über die App nicht löschen. Daher ist das löschen nicht möglich.</string>
-
     <string name="dialog_delete_user_title">Benutzer wirklich löschen?</string>
     <string name="dialog_delete_user_text_line1">Wollen Sie den Benutzer \n \n</string>
     <string name="dialog_delete_user_text_line2">\n \nwirklich löschen? Dies kann nicht mehr rückgängig gemacht werden, den Benutzer wird dann komplett gelöscht.</string>
     <string name="dialog_delete_user_successful_line1">Benutzer \n \n</string>
     <string name="dialog_delete_user_successful_line2">n \nerfolgreich gelöscht.</string>
-
     <string name="area_description">Fläche: %.1f m²</string>
-
     <string name="dialog_delete_my_GPS_data_title">Meine GPS Tracks?</string>
     <string name="dialog_delete_all_GPS_data_title">Alle GPS-Tracks löschen?</string>
     <string name="dialog_delete_all_areas_title">Alle Flächen löschen?</string>
@@ -92,9 +81,7 @@
     <string name="dialog_invalid_input_or_error">Ungültige Eingabe oder Fehler</string>
     <string name="dialog_edit_my_data_confirm_title">Daten speichern?</string>
     <string name="dialog_edit_my_data_confirm_text">UBist du sicher, dass du die Änderungen speichern möchtest?</string>
-
     <string name="edit_my_data_title">Meine Daten ändern</string>
-
     <string name="add_area">Fläche hinzufügen</string>
     <string name="area">Fläche</string>
     <string name="refresh">Aktualisieren</string>
@@ -131,10 +118,57 @@
     <string name="error">Fehler</string>
     <string name="change_user_data_text">Nach Bestätigung wird der Benutzer entsprechend ihren Angaben geändert. Der Benutzer wird hierüber nicht automatisch benachrichtigt.</string>
     <string name="change_my_user_data_info_text">Bitte beachten Sie: Nur Ihre E-Mail-Adresse, Telefonnummer und Track-Farbe können Sie selbst anpassen. Für Änderungen anderer Angaben wenden Sie sich bitte an den Administrator oder eine befugte Person.</string>
-
     <string name="location_permission_info_text">Diese App benötigt den Zugriff auf deinen Standort, auch im Hintergrund, um deine Position während Sucheinsätzen kontinuierlich aufzuzeichnen. So kann deine Rettungshundestaffel live mitverfolgen, welche Flächen bereits abgesucht wurden.</string>
     <string name="location_permission_info_title">Standortberechtigungen benötigt</string>
     <string name="next">Weiter</string>
     <string name="area_description_label">Beschreibung Fläche</string>
-
+    <string name="unknown_error">Unbekannter Fehler</string>
+    <string name="already_in_progress">Bereits in Bearbeitung</string>
+    <string name="server_error">Server Fehler</string>
+    <string name="no_areas_to_upload">Keine Flächen zum hochladen</string>
+    <string name="login_successful">Login Erfolgreich</string>
+    <string name="user_parameter_false">Benutzerparameter falsch</string>
+    <string name="login_unknown_result">Login Unbekanntes Ergebnis</string>
+    <string name="all_areas_deleted">Alle Flächen gelöscht</string>
+    <string name="my_location_data_deleted">Meine Standortdaten wurden gelöscht</string>
+    <string name="menu">Menü</string>
+    <string name="manage_area">Flächenverwaltung</string>
+    <string name="manage_track">Trackverwaltung</string>
+    <string name="uploaded">Hochgeladen</string>
+    <string name="area_description_info_box">%1$s\n%2$s m² (%3$s ha)\n%4$s</string>
+    <string name="area_title_default">Unbenannte Fläche</string>
+    <string name="area_description_default">–</string>
+    <string name="status_uploaded">✅ Hochgeladen</string>
+    <string name="status_not_uploaded">❌ Nicht hochgeladen</string>
+    <string name="area_management_title">Flächenverwaltung</string>
+    <string name="delete_all_areas_button">Alle Flächen löschen</string>
+    <string name="all_areas_heading">Alle Flächen</string>
+    <string name="no_areas_available">Keine Flächen vorhanden</string>
+    <string name="coordinate_point_count">Koordinatenpunkte: %1$d</string>
+    <string name="confirm_area_delete_title">⚠️ Alle Flächen Löschen</string>
+    <string name="confirm_area_delete_description">Möchtest du alle Flächen löschen? Diese werden dann nicht mehr für dich und andere auf der Karte angezeigt</string>
+    <string name="confirm_area_delete_button">Alle Flächen Löschen</string>
+    <string name="result_success">Erfolg</string>
+    <string name="result_error">Fehler!</string>
+    <string name="ok">OK</string>
+    <string name="saving">Speichern...</string>
+    <string name="track_management_title">Trackverwaltung</string>
+    <string name="delete_my_gps_data_button">Lösche Meine GPS Daten</string>
+    <string name="delete_all_gps_data_button">Alle GPS Daten löschen</string>
+    <string name="export_gpx_button">Alle Tracks als .gpx Datei exportieren</string>
+    <string name="my_track_title">Mein Track</string>
+    <string name="no_own_track">Kein eigener Track vorhanden</string>
+    <string name="waypoint_count">Anzahl Wegpunkte: %1$d</string>
+    <string name="total_length">Gesamtlänge: %.1f m</string>
+    <string name="all_users_title">Alle Benutzer</string>
+    <string name="no_tracks_available">Keine Tracks vorhanden</string>
+    <string name="confirm_delete_my_track_title">⚠️ Meine GPS Daten Löschen</string>
+    <string name="confirm_delete_my_track_description">Möchtest du deine GPS-Daten löschen? Diese werden danach nicht mehr auf der Karte angezeigt!</string>
+    <string name="confirm_delete_my_track_button">Meine GPS-Daten Löschen</string>
+    <string name="confirm_delete_all_tracks_title">⚠️ Alle GPS Daten Löschen</string>
+    <string name="confirm_delete_all_tracks_description">Möchtest du ALLE GPS Daten löschen? Damit werden alle GPS Daten auf dem Server gelöscht und stehen unwiderruflich nicht mehr zur Verfügung!</string>
+    <string name="confirm_delete_all_tracks_button">Alle GPS-Daten Löschen</string>
+    <string name="privacy_policy">Datenschutzerklärung</string>
+    <string name="imprint">Impressum</string>
+    <string name="my_user_data">Meine Benutzerdaten</string>
 </resources>

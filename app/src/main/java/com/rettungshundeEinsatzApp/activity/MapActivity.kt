@@ -14,7 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import com.rettungshundeEinsatzApp.R
-import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataAndLocationsDatabase
 import com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataProvider
 import com.rettungshundeEinsatzApp.functions.checkTokenAndDownloadMyUserData
 import com.rettungshundeEinsatzApp.functions.downloadAllGpsLocations
@@ -217,9 +216,6 @@ class MapActivity : ComponentActivity() {
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
             .show()
     }
-
-
-
 }
 
 

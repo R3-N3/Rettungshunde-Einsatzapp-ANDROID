@@ -145,7 +145,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val apiService = retrofit.create(ApiService::class.java)
-    val areaRepository = remember { AreaRepository(apiService, areaDao) }
+    val areaRepository = remember { AreaRepository(apiService, areaDao, context) }
     val areaViewModel: AreaViewModel = viewModel(factory = AreaViewModel.Factory(areaDao))
     val allAreas by areaViewModel.areas.collectAsState()
     val lastPointText = stringResource(id = R.string.last_point)
@@ -608,12 +608,10 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                     Spacer(modifier = Modifier.height(25.dp))
 
                     Text(
-                        "Menü",
+                        stringResource(id = R.string.menu),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground
                     )
-
-                    //Spacer(modifier = Modifier.height(16.dp))
 
                     // Start/Stop GPS tracking
                     Button(
@@ -634,7 +632,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                         PulsingIcon(
                             icon = Icons.Default.ShareLocation,
                             contentDescription = null,
-                            pulse = gpsActive // <- hier entscheidet sich das Pulsieren
+                            pulse = gpsActive
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -681,7 +679,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                             contentDescription = null
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Flächenverwaltung")
+                        Text(stringResource(id = R.string.manage_area))
                     }
 
 
@@ -704,7 +702,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
                                 contentDescription = null
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Trackverwaltung")
+                            Text(stringResource(id = R.string.manage_track))
                         }
                     
 
@@ -906,8 +904,8 @@ fun PulsingIcon(
     icon: ImageVector,    contentDescription: String?,
     modifier: Modifier = Modifier,
     pulse: Boolean = false,
-    activeColor: Color = Color.Red, // neu: aktive Farbe
-    inactiveColor: Color = LocalContentColor.current // Standardfarbe
+    activeColor: Color = Color.Red,
+    inactiveColor: Color = LocalContentColor.current
 ) {
     val scale by rememberInfiniteTransition(label = "pulseTransition")
         .animateFloat(
@@ -923,7 +921,7 @@ fun PulsingIcon(
     Icon(
         imageVector = icon,
         contentDescription = contentDescription,
-        tint = if (pulse) activeColor else inactiveColor, // <--- Farbe wechselt hier
+        tint = if (pulse) activeColor else inactiveColor,
         modifier = modifier.graphicsLayer {
             scaleX = scale
             scaleY = scale

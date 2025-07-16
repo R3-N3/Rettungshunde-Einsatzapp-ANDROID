@@ -1,12 +1,13 @@
 package com.rettungshundeEinsatzApp.functions
 
+import android.content.Context
 import android.util.Log
+import com.rettungshundeEinsatzApp.R
 import com.rettungshundeEinsatzApp.database.area.AreaDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.FormBody
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -15,6 +16,7 @@ import org.json.JSONObject
 import java.io.IOException
 
 fun deleteAllAreas(
+    context: Context,
     serverApiURL: String,
     token: String,
     areaDao: AreaDao,
@@ -23,8 +25,6 @@ fun deleteAllAreas(
     val client = OkHttpClient()
 
     Log.d("DeleteAllAreas", "Token: '$token'")
-
-
 
     val jsonMediaType = "application/json; charset=utf-8".toMediaType()
     val jsonBody = JSONObject().put("token", token).toString()
@@ -52,16 +52,16 @@ fun deleteAllAreas(
                     withContext(Dispatchers.IO) {
                         areaDao.deleteAllAreas()
                     }
-                    Log.d("DeleteAllAreas", "✅ Alle Flächen auf Server gelöscht")
+                    Log.d("DeleteAllAreas", "✅ All Areas deleted on Server ")
                     onResult(true, message)
                 } else {
-                    Log.w("DeleteAllAreas", "⚠️ Fehler: $message")
+                    Log.w("DeleteAllAreas", "⚠️ Error: $message")
                     onResult(false, message)
                 }
             }
         } catch (e: Exception) {
-            Log.e("DeleteAllAreas", "❌ Fehler: ${e.message}", e)
-            onResult(false, e.message ?: "Unbekannter Fehler")
+            Log.e("DeleteAllAreas", "❌ Error: ${e.message}", e)
+            onResult(false, e.message ?: context.getString(R.string.unknown_error))
         }
     }
 }

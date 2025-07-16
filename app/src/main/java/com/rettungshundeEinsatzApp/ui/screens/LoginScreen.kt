@@ -155,7 +155,7 @@ fun LoginScreen(
                         serverApiURL = apiUrl
 
                         if (serverApiURL.isNotBlank() && username.isNotBlank() && password.isNotBlank()) {
-                            checkLoginParam(username, password, serverApiURL) { message ->
+                            checkLoginParam(context, username, password, serverApiURL) { message ->
                                 val response = message.split(",")
                                 val status = response[0]
                                 val responseToken = response.getOrElse(2) { "" }

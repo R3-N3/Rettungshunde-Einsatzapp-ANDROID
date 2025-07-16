@@ -2,6 +2,7 @@ package com.rettungshundeEinsatzApp.functions
 
 import android.content.Context
 import android.util.Log
+import com.rettungshundeEinsatzApp.R
 import com.rettungshundeEinsatzApp.database.mylocallocation.MyLocationDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +19,7 @@ fun deleteMyGPSData(
                 val db = MyLocationDatabase.getDatabase(context.applicationContext)
                 db.locationDao().deleteAll()
             }
-            onResult(true, "My Location deleted")
+            onResult(true, context.getString(R.string.my_location_data_deleted))
 
             Log.d("DeleteMyGPSData","Success")
         } catch (e: Exception) {

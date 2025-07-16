@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AllUserDataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(users: kotlin.collections.List<com.rettungshundeEinsatzApp.database.alluserdataandlocations.AllUserDataEntity>)
+    suspend fun insertAll(users: List<AllUserDataEntity>)
 
     @Query("SELECT * FROM userData")
     suspend fun getAll(): List<AllUserDataEntity>

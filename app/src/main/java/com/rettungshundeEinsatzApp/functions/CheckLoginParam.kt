@@ -1,15 +1,18 @@
 package com.rettungshundeEinsatzApp.functions
 
+import android.content.Context
 import kotlinx.coroutines.*
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
 import android.util.Log
+import com.rettungshundeEinsatzApp.R
 
 
 val httpClient = OkHttpClient()
 
 fun checkLoginParam(
+    context: Context,
     username: String,
     password: String,
     serverApiURL: String,
@@ -41,10 +44,10 @@ fun checkLoginParam(
                 val status = jsonObject.get("status")
                 val token = jsonObject.get("token")
                 val message = when (status) {
-                    "success" -> "Login successful!"
-                    "false" -> "User Parameter false"
+                    "success" -> context.getString(R.string.login_successful)
+                    "false" -> context.getString(R.string.user_parameter_false)
                     "error" -> jsonObject.getString("message")
-                    else -> "Login Unknown Result"
+                    else -> context.getString(R.string.login_unknown_result)
                 }
                 val messageArray = arrayOf(status, message, token.toString())
                 onResponse(messageArray.joinToString(","))
@@ -53,7 +56,7 @@ fun checkLoginParam(
         } catch (e: Exception) {
             e.printStackTrace()
             Log.w("CheckLoginParam","Error: ${e.message}")
-            val message = "Error: ${e.message}"
+            val message = context.getString(R.string.error) +  e.message
             val messageArray = arrayOf("error", message, "")
             onResponse(messageArray.joinToString(","))
         }

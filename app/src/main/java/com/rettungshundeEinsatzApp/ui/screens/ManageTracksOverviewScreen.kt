@@ -107,7 +107,7 @@ fun ManageTracksOverviewScreen() {
                                 contentDescription = stringResource(id = R.string.contacts)
                             )
                             Spacer(modifier = Modifier.width(16.dp))
-                            Text("Trackverwaltung")
+                            Text(stringResource(R.string.track_management_title))
                         }
                     },
                 )
@@ -133,7 +133,7 @@ fun ManageTracksOverviewScreen() {
                     ) {
                         Icon(Icons.Default.DeleteForever, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text("Lösche Meine GPS Daten", fontSize = 18.sp)
+                        Text(stringResource(R.string.delete_my_gps_data_button), fontSize = 18.sp)
                     }
 
                     if (securityLevel > 1) {
@@ -151,7 +151,7 @@ fun ManageTracksOverviewScreen() {
                         ) {
                             Icon(Icons.Default.DeleteForever, contentDescription = null)
                             Spacer(Modifier.width(8.dp))
-                            Text("Alle GPS Daten löschen", fontSize = 18.sp)
+                            Text(stringResource(R.string.delete_all_gps_data_button), fontSize = 18.sp)
                         }
 
                         Button(
@@ -168,7 +168,7 @@ fun ManageTracksOverviewScreen() {
                         ) {
                             Icon(Icons.Default.Share, contentDescription = null)
                             Spacer(Modifier.width(8.dp))
-                            Text("Alle Tracks als .gpx Datei exportieren", fontSize = 18.sp)
+                            Text(stringResource(R.string.export_gpx_button), fontSize = 18.sp)
                         }
                     }
 
@@ -184,17 +184,17 @@ fun ManageTracksOverviewScreen() {
                     ) {
                         Column(modifier = Modifier.padding(8.dp)) {
                             if (myTrackStats.pointCount == 0) {
-                                Text("Kein eigener Track vorhanden", style = MaterialTheme.typography.bodyMedium)
+                                Text(stringResource(R.string.no_own_track), style = MaterialTheme.typography.bodyMedium)
                             } else {
                                 Text(myUserName, style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 4.dp))
-                                Text("Anzahl Wegpunkte: ${myTrackStats.pointCount}", style = MaterialTheme.typography.bodyMedium)
-                                Text("Gesamtlänge: ${"%.1f".format(myTrackStats.totalDistanceMeters)} m", style = MaterialTheme.typography.bodyMedium)
+                                Text(stringResource(R.string.waypoint_count) + ": ${myTrackStats.pointCount}", style = MaterialTheme.typography.bodyMedium)
+                                Text(stringResource(R.string.total_length) + ": ${"%.1f".format(myTrackStats.totalDistanceMeters)} m", style = MaterialTheme.typography.bodyMedium)
                             }
                         }
                     }
 
                     Text(
-                        text = "Alle Benutzer",
+                        text = stringResource(R.string.all_users_title),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 32.dp, start = 16.dp, bottom = 8.dp)
                     )
@@ -208,7 +208,7 @@ fun ManageTracksOverviewScreen() {
                     ) {
                         if (usersWithTrackStats.isEmpty()) {
                             Text(
-                                "Keine Tracks vorhanden",
+                                stringResource(R.string.no_tracks_available),
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -224,11 +224,11 @@ fun ManageTracksOverviewScreen() {
                                             modifier = Modifier.padding(top = 4.dp)
                                         )
                                         Text(
-                                            text = "Anzahl Wegpunkte: ${userStats.trackCount}",
+                                            text = stringResource(R.string.waypoint_count)  + ": ${userStats.trackCount}",
                                             style = MaterialTheme.typography.bodyMedium
                                         )
                                         Text(
-                                            text = "Gesamtlänge: ${"%.1f".format(userStats.totalDistanceMeters)} m",
+                                            text = stringResource(R.string.total_length)  + ": ${"%.1f".format(userStats.totalDistanceMeters)} m",
                                             style = MaterialTheme.typography.bodyMedium
                                         )
                                         if (index < usersWithTrackStats.lastIndex) {
@@ -258,8 +258,8 @@ fun ManageTracksOverviewScreen() {
                             .fillMaxWidth()
                             .padding(24.dp)
                     ) {
-                        Text("⚠️ Meine GPS Daten Löschen", style = MaterialTheme.typography.titleMedium)
-                        Text("Möchtest du deine GPS-Daten löschen? Diese werden danach nicht mehr auf der Karte angezeigt!", modifier = Modifier.padding(top = 8.dp))
+                        Text(stringResource(R.string.confirm_delete_my_track_title) , style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.confirm_delete_my_track_description), modifier = Modifier.padding(top = 8.dp))
                         Spacer(Modifier.height(16.dp))
                         Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
                             Button(
@@ -285,7 +285,7 @@ fun ManageTracksOverviewScreen() {
                                     }
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                            ) { Text("Meine GPS-Daten Löschen") }
+                            ) { Text(stringResource(R.string.confirm_delete_my_track_title)) }
                         }
                     }
                 }
@@ -303,8 +303,8 @@ fun ManageTracksOverviewScreen() {
                             .fillMaxWidth()
                             .padding(24.dp)
                     ) {
-                        Text("⚠️ Alle GPS Daten Löschen", style = MaterialTheme.typography.titleMedium)
-                        Text("Möchtest du ALLE GPS Daten löschen? Damit sind werden alle GPS Daten auf dem Server gelöscht und steht unwiederuflich nicht mehr zur verfügung!", modifier = Modifier.padding(top = 8.dp))
+                        Text(stringResource(R.string.confirm_delete_all_tracks_title), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.confirm_delete_all_tracks_description), modifier = Modifier.padding(top = 8.dp))
                         Spacer(Modifier.height(16.dp))
                         Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
                             Button(
@@ -318,7 +318,7 @@ fun ManageTracksOverviewScreen() {
                             Button(
                                 onClick = {
                                     isSubmitting = true
-                                    deleteAllGPSData(serverApiURL, token, locationDao) { success, message ->
+                                    deleteAllGPSData(context, serverApiURL, token, locationDao) { success, message ->
                                         Log.d("ManageTracksOverviewScreen", "Lösche Alle Daten: $success – $message")
                                         resultMessage = message
                                         resultSuccess = success
@@ -330,7 +330,7 @@ fun ManageTracksOverviewScreen() {
                                     }
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                            ) { Text("Alle GPS-Daten Löschen") }
+                            ) { Text(stringResource(R.string.confirm_delete_all_tracks_button)) }
                         }
                     }
                 }
@@ -349,14 +349,14 @@ fun ManageTracksOverviewScreen() {
                     ) {
                         if (resultSuccess) {
                             Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Green, modifier = Modifier.size(48.dp))
-                            Text("Erfolg", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
+                            Text(stringResource(R.string.result_success), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
                         } else {
                             Icon(Icons.Default.Cancel, contentDescription = null, tint = Color.Red, modifier = Modifier.size(48.dp))
-                            Text("Fehler!", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
+                            Text(stringResource(R.string.result_error), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
                         }
                         Text(text = resultMessage)
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { coroutineScope.launch { resultSheetState.hide() } }) { Text("OK") }
+                        Button(onClick = { coroutineScope.launch { resultSheetState.hide() } }) { Text(stringResource(R.string.ok)) }
                     }
                 }
             }
@@ -373,7 +373,7 @@ fun ManageTracksOverviewScreen() {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator()
                             Spacer(Modifier.height(12.dp))
-                            Text("Speichern...", style = MaterialTheme.typography.bodyMedium)
+                            Text(stringResource(R.string.saving), style = MaterialTheme.typography.bodyMedium)
                         }
                     }
                 }

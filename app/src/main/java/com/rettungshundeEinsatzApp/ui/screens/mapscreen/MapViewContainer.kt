@@ -164,14 +164,14 @@ fun MapViewContainer(
 
             allAreas.forEach { areaWithCoordinates ->
                 if (areaWithCoordinates.coordinates.isNotEmpty()) {
-                    val polygon = Polygon(map).apply {
+                    val polygon = Polygon(map)
+                    polygon.apply {
                         val geoPoints = areaWithCoordinates.coordinates.sortedBy { it.orderIndex }
                             .map { coordinate -> GeoPoint(coordinate.latitude, coordinate.longitude) }
 
                         setPoints(geoPoints)
                         isEnabled = true
 
-                        // Farbe wie gehabt
                         try {
                             val baseColor = try {
                                 areaWithCoordinates.area.color.toColorInt()
@@ -199,26 +199,36 @@ fun MapViewContainer(
 
                         outlinePaint.strokeWidth = 3f
 
-                        // Setze InfoWindow mit onOpen-Logik
+
                         infoWindow = object : InfoWindow(R.layout.user_info_window, mapView) {
                             override fun onOpen(item: Any?) {
+                                val areaInSqMeters = calculatePolygonArea(this@apply.actualPoints)
                                 val view = mView
                                 val areaTitleText = view.findViewById<TextView>(R.id.user_info_title)
                                 val areaDescriptionText = view.findViewById<TextView>(R.id.user_info_description)
-                                val areaInSqMeters = calculatePolygonArea(points)
                                 val areaInHectares = areaInSqMeters / 10_000.0
-                                val uploadedStatus = if (areaWithCoordinates.area.uploadedToServer) "✅ Hochgeladen" else "❌ Nicht hochgeladen"
-                                areaTitleText.text = areaWithCoordinates.area.title.ifBlank { "Unbenannte Fläche" }
-                                areaDescriptionText.text = """
-                                    ${areaWithCoordinates.area.desc.ifBlank { "–" }}
-                                    ${"%,.0f".format(Locale.getDefault(), areaInSqMeters)} m² (${String.format(Locale.getDefault(), "%.2f", areaInHectares)} ha)
-                                    $uploadedStatus
-                                    """.trimIndent()
+                                val uploadedStatus = context.getString(
+                                    if (areaWithCoordinates.area.uploadedToServer)
+                                        R.string.status_uploaded
+                                    else
+                                        R.string.status_not_uploaded
+                                )
+                                areaTitleText.text = areaWithCoordinates.area.title.ifBlank {
+                                    context.getString(R.string.area_title_default)
+                                }
+                                val areaDescription = areaWithCoordinates.area.desc.ifBlank {
+                                    context.getString(R.string.area_description_default)
+                                }
+                                val sqMeters = String.format(Locale.getDefault(), "%,.0f", areaInSqMeters)
+                                val hectares = String.format(Locale.getDefault(), "%.2f", areaInHectares)
 
-
-
-
-
+                                areaDescriptionText.text = context.getString(
+                                    R.string.area_description_info_box,
+                                    areaDescription,
+                                    sqMeters,
+                                    hectares,
+                                    uploadedStatus
+                                )
                             }
 
                             override fun onClose() {}

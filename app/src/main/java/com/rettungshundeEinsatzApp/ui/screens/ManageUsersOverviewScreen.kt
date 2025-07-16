@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
@@ -58,7 +57,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rettungshundeEinsatzApp.R
-import com.rettungshundeEinsatzApp.activity.EditMyUserDataActivity
 import com.rettungshundeEinsatzApp.activity.ManageUserSingleViewActivity
 import com.rettungshundeEinsatzApp.activity.ManageUsersOverviewActivity
 import com.rettungshundeEinsatzApp.activity.NewUserActivity
@@ -145,7 +143,7 @@ fun ManageUsersOverviewScreen(
                     }
                     item {
                         Text(
-                            text = "Alle Benutzer",
+                            text = stringResource(id = R.string.all_users_title),
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.padding(top = 32.dp, start = 16.dp, bottom = 8.dp)
                         )
@@ -419,7 +417,7 @@ fun ManageUsersOverviewScreen(
 
                             }
                         }) {
-                            Text("OK")
+                            Text(stringResource(id = R.string.ok))
                         }
                     },
                     title = {

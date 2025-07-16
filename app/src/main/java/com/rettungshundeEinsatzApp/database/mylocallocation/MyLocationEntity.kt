@@ -12,5 +12,3 @@ data class MyLocationEntity(
     val timestamp: Long = System.currentTimeMillis(),
     val uploadToServerStatus: Boolean = false
 )
-
-

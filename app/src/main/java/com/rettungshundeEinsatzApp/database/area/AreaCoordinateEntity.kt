@@ -5,8 +5,6 @@ import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
 import androidx.room.Index
 
-
-
 @Entity(
     tableName = "area_coordinate",
     foreignKeys = [ForeignKey(
@@ -17,6 +15,7 @@ import androidx.room.Index
     )],
     indices = [Index(value = ["areaId"])]
 )
+
 data class AreaCoordinateEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val latitude: Double,

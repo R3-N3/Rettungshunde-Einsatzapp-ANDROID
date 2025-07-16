@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Contacts
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Square
 import androidx.compose.material3.Button
@@ -95,7 +94,8 @@ fun ManageAreaOverviewScreen() {
                                 contentDescription = stringResource(id = R.string.contacts)
                             )
                             Spacer(modifier = Modifier.width(16.dp))
-                            Text("Flächenverwaltung")
+                            Text(stringResource(R.string.area_management_title))
+
                         }
                     },
                 )
@@ -124,12 +124,12 @@ fun ManageAreaOverviewScreen() {
                         ) {
                             Icon(Icons.Default.DeleteForever, contentDescription = null)
                             Spacer(Modifier.width(8.dp))
-                            Text("Alle Flächen löschen", fontSize = 18.sp)
+                            Text(stringResource(R.string.delete_all_areas_button), fontSize = 18.sp)
                         }
                     }
 
                     Text(
-                        text = "Alle Flächen",
+                        text = stringResource(R.string.all_areas_heading),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 32.dp, start = 16.dp, bottom = 8.dp)
                     )
@@ -142,7 +142,7 @@ fun ManageAreaOverviewScreen() {
                     ) {
                         if (areas.isEmpty()) {
                             Text(
-                                "Keine Flächen vorhanden",
+                                stringResource(R.string.no_areas_available),
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -165,10 +165,10 @@ fun ManageAreaOverviewScreen() {
                                             style = MaterialTheme.typography.bodyMedium
                                         )
                                         Text(
-                                            text = "Koordinatenpunkte: ${areaWithCoords.coordinates.size}",
+                                            text = stringResource(R.string.coordinate_point_count, areaWithCoords.coordinates.size),
                                             style = MaterialTheme.typography.bodySmall
                                         )
-                                        // Divider nur anzeigen, wenn es nicht der letzte Eintrag ist
+
                                         if (index < areas.lastIndex) {
                                             HorizontalDivider(
                                                 modifier = Modifier.padding(top = 8.dp),
@@ -196,8 +196,8 @@ fun ManageAreaOverviewScreen() {
                             .fillMaxWidth()
                             .padding(24.dp)
                     ) {
-                        Text("⚠️ Alle Flächen Löschen", style = MaterialTheme.typography.titleMedium)
-                        Text("Möchtest du alle Flächen löschen? Diese werden dann nicht mehr für dich und andere auf der Karte angezeigt", modifier = Modifier.padding(top = 8.dp))
+                        Text(stringResource(R.string.confirm_area_delete_title), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.confirm_area_delete_description), modifier = Modifier.padding(top = 8.dp))
                         Spacer(Modifier.height(16.dp))
                         Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
                             Button(
@@ -211,7 +211,7 @@ fun ManageAreaOverviewScreen() {
                             Button(
                                 onClick = {
                                     isSubmitting = true
-                                    deleteAllAreas(serverApiURL, token, areaDao) { success, message ->
+                                    deleteAllAreas(context, serverApiURL, token, areaDao) { success, message ->
                                         Log.d("ManageTracksOverviewScreen", "Lösche Alle Daten: $success – $message")
                                         resultMessage = message
                                         resultSuccess = success
@@ -223,7 +223,7 @@ fun ManageAreaOverviewScreen() {
                                     }
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                            ) { Text("Alle Flächen Löschen") }
+                            ) { Text(stringResource(R.string.confirm_area_delete_button)) }
                         }
                     }
                 }
@@ -242,14 +242,14 @@ fun ManageAreaOverviewScreen() {
                     ) {
                         if (resultSuccess) {
                             Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Green, modifier = Modifier.size(48.dp))
-                            Text("Erfolg", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
+                            Text(stringResource(R.string.result_success), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
                         } else {
                             Icon(Icons.Default.Cancel, contentDescription = null, tint = Color.Red, modifier = Modifier.size(48.dp))
-                            Text("Fehler!", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
+                            Text(stringResource(R.string.result_error), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
                         }
                         Text(text = resultMessage)
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { coroutineScope.launch { resultSheetState.hide() } }) { Text("OK") }
+                        Button(onClick = { coroutineScope.launch { resultSheetState.hide() } }) { Text(stringResource(R.string.ok)) }
                     }
                 }
             }
@@ -266,7 +266,7 @@ fun ManageAreaOverviewScreen() {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator()
                             Spacer(Modifier.height(12.dp))
-                            Text("Speichern...", style = MaterialTheme.typography.bodyMedium)
+                            Text(stringResource(R.string.saving), style = MaterialTheme.typography.bodyMedium)
                         }
                     }
                 }
