@@ -151,7 +151,7 @@
     <string name="result_success">Erfolg</string>
     <string name="result_error">Fehler!</string>
     <string name="ok">OK</string>
-    <string name="saving">Speichern...</string>
+    <string name="saving">Speichern…</string>
     <string name="track_management_title">Trackverwaltung</string>
     <string name="delete_my_gps_data_button">Lösche Meine GPS Daten</string>
     <string name="delete_all_gps_data_button">Alle GPS Daten löschen</string>
@@ -171,4 +171,27 @@
     <string name="privacy_policy">Datenschutzerklärung</string>
     <string name="imprint">Impressum</string>
     <string name="my_user_data">Meine Benutzerdaten</string>
+    <string name="radio_call_name_format">Funkrufname</string>
+    <string name="saved">Gespeichert</string>
+    <string name="report">Einsatzbericht</string>
+    <string name="report_description_input_field">Beschreiben Sie hier den Einsatzverlauf…</string>
+    <string name="send">Absenden</string>
+    <string name="send_report_title">Einsatzbericht senden?</string>
+    <string name="send_report_message">"Wollen Sie den Einsatzbericht absenden? Dieser wird dann an die Einsatzleitung der Staffen übertragen. Dieser Vorgangang kann nicht Rückgängig gemacht werden."</string>
+    <string name="select_date">Datum wählen</string>
+    <string name="report_info_text">Für jeden Einsatz soll ein Einsatzbericht von jeder Einsatzkraft geschrieben werden. Dieser soll kurz der Ablauf swe Einsatzes beschreiben. Es soll insbesondere auf Besonderheiten und Schwierigkeiten beim Einsatz eingegangen und diese beschriebn werden. Der Inhalt wird vertraulich behandelt. In den EInsatzbericht über die App ist können keine Anhänge mit als EInsatzbericht versendet werden.</string>
+    <string name="password_reset_title">Passwort Reset</string>
+    <string name="password_reset_info_text">Zum zurücksetzen ihrer E-Mail Adresse wählen Sie zunächst bitte ihre Organisation aus. Im Anschluss geben Sie die E-Mail Adresse mit, mit welcher Sie von ihrer Organisation für diese App angemeldet wurden. Im Anschluss bestätigen Sie ihre Eingaben. Wenn diese korrekt sind, erhalten Sie eine E-Mail mit weiteren Anweisungen.</string>
+    <string name="reset">Zurücksetzen</string>
+    <string name="reset_password_title">Zurücksetzen</string>
+    <string name="reset_password_message">Wollen Sie Ihr Passwort wirklich zurücksetzen? Danach wird Ihr Account von allen Geräten abgemeldet, und Sie müssen sich auf jedem Gerät erneut anmelden.</string>
+    <string name="my_local_track_color">Meine Lokale Track Farbe</string>
+    <string name="my_local_track_color_change">Meine Lokale Track Farbe ändern</string>
+    <string name="legal">Rechtliches</string>
+    <string name="area_info_title">Flächenname</string>
+    <string name="area_info_more">Weitere Infos…</string>
+
+
+
+
 </resources>

@@ -352,7 +352,7 @@ fun EditMyUserDataScreen(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 CircularProgressIndicator()
                                 Spacer(modifier = Modifier.height(12.dp))
-                                Text("Speichern...", style = MaterialTheme.typography.bodyMedium)
+                                Text(stringResource(id = R.string.saving), style = MaterialTheme.typography.bodyMedium)
                             }
                         }
                     }
@@ -372,19 +372,19 @@ fun EditMyUserDataScreen(
                         ) {
                             if(resultSuccess){
                                 Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Green, modifier = Modifier.size(48.dp))
-                                Text("Gespeichert!", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
+                                Text(stringResource(id = R.string.saved), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
                                 Text(text = resultMessage)
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Button(onClick = { onCancel() }) { Text("OK") }
                             }
                             else{
                                 Icon(Icons.Default.Cancel, contentDescription = null, tint = Color.Red, modifier = Modifier.size(48.dp))
-                                Text("Fehler!", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
+                                Text(stringResource(id = R.string.result_error), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
                                 Text(text = resultMessage)
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Button(onClick = { coroutineScope.launch {
                                     resultSheetState.hide()
-                                } }) { Text("OK") }
+                                } }) { Text(stringResource(id = R.string.ok)) }
                             }
                         }
                     }

@@ -173,11 +173,9 @@ fun SettingsScreen() {
                 }
 
 
-
-                // Card 2: track Farbe
                 item {
                     Text(
-                        text = "Meine Lokale Track-Farbe",
+                        text = stringResource(id = R.string.my_local_track_color),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 16.dp, start = 16.dp, bottom = 8.dp)
                     )
@@ -213,7 +211,7 @@ fun SettingsScreen() {
                                     .fillMaxWidth()
                                     .padding(top = 16.dp)
                             ) {
-                                Text("Lokale Track-Farbe ändern", fontSize = 20.sp)
+                                Text(stringResource(id = R.string.my_local_track_color_change), fontSize = 20.sp)
                             }
                         }
                     }
@@ -223,7 +221,7 @@ fun SettingsScreen() {
                 // Card 3: Rechtliches
                 item {
                     Text(
-                        text = "Rechtliches",
+                        text = stringResource(id = R.string.legal),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 0.dp, start = 16.dp, bottom = 8.dp)
                     )

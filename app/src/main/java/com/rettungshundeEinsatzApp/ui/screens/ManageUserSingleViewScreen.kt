@@ -302,7 +302,7 @@ fun ManageUserSingleViewScreen(
                             },
                             confirmButton = {
                                 Button(onClick = { showColorPicker = false }) {
-                                    Text("OK")
+                                    Text(stringResource(id = R.string.ok))
                                 }
                             }
                         )
@@ -444,7 +444,7 @@ fun ManageUserSingleViewScreen(
                                 onCancel()
                             }
                         }) {
-                            Text("OK")
+                            Text(stringResource(id = R.string.ok))
                         }
                     },
                     title = {

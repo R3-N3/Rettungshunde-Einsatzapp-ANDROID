@@ -68,7 +68,7 @@ fun ContactScreenContent(userList: List<AllUserDataEntity>) {
                         .padding(8.dp)) {
 
                         Text(user.username, style = MaterialTheme.typography.titleMedium)
-                        Text("Funkrufname: ${user.radiocallname}")
+                        Text(stringResource(id = R.string.radio_call_name_format, user.radiocallname))
                         Text(
                             text = user.phonenumber,
                             style = MaterialTheme.typography.bodyMedium,

@@ -297,7 +297,7 @@ fun ManageUsersOverviewScreen(
                         Button(onClick = {
                             showDeleteNotPossibleDialog = false
                         }) {
-                            Text("OK")
+                            Text(stringResource(id = R.string.ok))
                         }
                     },
                     title = {

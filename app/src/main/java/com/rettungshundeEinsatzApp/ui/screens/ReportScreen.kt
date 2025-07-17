@@ -87,10 +87,10 @@ fun ReportScreenContent() {
                     ) {
                         Icon(
                             Icons.Filled.Receipt,
-                            contentDescription = "Report"
+                            contentDescription = stringResource(id = R.string.report)
                         )
                         Spacer(modifier = Modifier.width(16.dp))
-                        Text("Report")
+                        Text(stringResource(id = R.string.report))
                     }
                 },
             )
@@ -99,14 +99,14 @@ fun ReportScreenContent() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState) // <-- hier scrollbar machen
+                .verticalScroll(scrollState)
                 .padding(innerPadding)
         ) {
 
 
 
             Text(
-                text = "Für jeden Einsatz soll ein Einsatzbericht von jeder Einsatzkraft geschrieben werden. Dieser soll kurz der Ablauf swe Einsatzes beschreiben. Es soll insbesondere auf Besonderheiten und Schwierigkeiten beim Einsatz eingegangen und diese beschriebn werden. Der Inhalt wird vertraulich behandelt. In den EInsatzbericht über die App ist können keine Anhänge mit als EInsatzbericht versendet werden.",
+                text = stringResource(id = R.string.report_info_text),
                 fontSize = 12.sp,
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
             )
@@ -115,7 +115,7 @@ fun ReportScreenContent() {
                 value = myUserName,
                 onValueChange = {
                 },
-                label = { Text("Name") },
+                label = { Text(stringResource(id = R.string.name)) },
                 isError = false,
                 singleLine = true,
                 readOnly = true,
@@ -133,14 +133,14 @@ fun ReportScreenContent() {
             OutlinedTextField(
                 value = reportText,
                 onValueChange = { reportText = it },
-                label = { Text("Einsatzbericht") },
+                label = { Text(stringResource(id = R.string.report)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 singleLine = false,
                 maxLines = 6,
                 minLines = 6,
-                placeholder = { Text("Beschreiben Sie hier den Einsatzverlauf...") }
+                placeholder = { Text(stringResource(id = R.string.report_description_input_field)) }
             )
 
             Row(
@@ -164,8 +164,7 @@ fun ReportScreenContent() {
                     modifier = Modifier.weight(1f),
                     enabled = true
                 ) {
-                    Text("Absenden")
-                }
+                    Text(stringResource(id = R.string.send))                }
 
 
             }
@@ -175,8 +174,8 @@ fun ReportScreenContent() {
     if (showValidDialog) {
         AlertDialog(
             onDismissRequest = {},
-            title = { Text("Einsatzbericht senden?") },
-            text = { Text("Wollen Sie den Einsatzbericht absenden? Dieser wird dann an die Einsatzleitung der Staffen übertragen. Dieser Vorgangang kann nicht Rückgängig gemacht werden.") },
+            title = { Text(stringResource(id = R.string.send_report_title)) },
+            text = { Text(stringResource(id = R.string.send_report_message)) },
             confirmButton = {
                 Button(onClick = {
                     val token: String = sharedPreferences.getString("token", "").toString()
@@ -233,7 +232,7 @@ fun ReportScreenContent() {
                     showResultDialog = false
                     if (resultSuccess) (context as? android.app.Activity)?.finish()
                 }) {
-                    Text("OK")
+                    Text(stringResource(id = R.string.ok))
                 }
             },
             title = {
@@ -265,9 +264,9 @@ fun ReportScreenContent() {
 @Composable
 fun DatePickerTextField(
     selectedDate: String,
-    onDateSelected: (String) -> Unit,
-    label: String = "Datum auswählen"
+    onDateSelected: (String) -> Unit
 ) {
+    val label = stringResource(id = R.string.select_date)
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
@@ -278,7 +277,7 @@ fun DatePickerTextField(
     val datePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, y: Int, m: Int, d: Int ->
-            onDateSelected("%02d.%02d.%04d".format(d, m + 1, y)) // <-- statt lokalen State ändern
+            onDateSelected("%02d.%02d.%04d".format(d, m + 1, y))
         }, year, month, day
     )
 
@@ -290,12 +289,12 @@ fun DatePickerTextField(
     ) {
         OutlinedTextField(
             value = selectedDate,
-            onValueChange = {}, // Keine manuelle Eingabe
+            onValueChange = {},
             label = { Text(label) },
             readOnly = true,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            enabled = false, // Styling wie normales Feld
+            enabled = false,
             colors = TextFieldDefaults.colors(
                 disabledTextColor = MaterialTheme.colorScheme.onSurface,
                 disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,

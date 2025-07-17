@@ -72,7 +72,7 @@ fun ResetPasswordScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Passwort Reset") },
+                    title = { Text(stringResource(id = R.string.password_reset_title)) },
                     navigationIcon = {
                         IconButton(onClick = { }) {
                             Icon(Icons.Default.LockReset, contentDescription = "Bild")
@@ -93,7 +93,7 @@ fun ResetPasswordScreen(
 
                 Text(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    text = "Zum zurücksetzen ihrer E-Mail Adresse wählen Sie zunächst bitte ihre Organisation aus. Im Anschluss geben Sie die E-Mail Adresse mit, mit welcher Sie von ihrer Organisation für diese App angemeldet wurden. Im Anschluss bestätigen Sie ihre Eingaben. Wenn diese korrekt sind, erhalten Sie eine E-Mail mit weiteren Anweisungen."
+                    text = stringResource(id = R.string.password_reset_info_text)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -160,7 +160,7 @@ fun ResetPasswordScreen(
                         modifier = Modifier.weight(1f),
                         enabled = !showValidDialog
                     ) {
-                        Text("Zurücksetzen")
+                        Text(stringResource(id = R.string.reset))
                     }
                 }
             }
@@ -168,9 +168,9 @@ fun ResetPasswordScreen(
             if (showValidDialog) {
                 AlertDialog(
                     onDismissRequest = {},
-                    title = { Text("Passwort zurücksetzen") },
-                    text = { Text("Wollen Sie ihr Passwort wirklic zurücksetzen? Dannach wird Ihr Account von allen Geräten agmeledet und Sie müssen sich in jedem Gerät erneut anmelden. ") },
-                    confirmButton = {
+                    title = { Text(stringResource(id = R.string.reset_password_title)) },
+                    text = { Text(stringResource(id = R.string.reset_password_message)) },
+                     confirmButton = {
                         Button(onClick = {
                             showValidDialog = false
                             isSubmitting = true
@@ -224,7 +224,7 @@ fun ResetPasswordScreen(
                           showResultDialog = false
                           if (resultSuccess) finishActivity()
                       }) {
-                          Text("OK")
+                          Text(stringResource(id = R.string.ok))
                       }
                   },
                   title = {

@@ -160,7 +160,7 @@
     <string name="result_success">Success</string>
     <string name="result_error">Error!</string>
     <string name="ok">OK</string>
-    <string name="saving">Saving...</string>
+    <string name="saving">Saving…</string>
     <string name="track_management_title">Track Management</string>
     <string name="delete_my_gps_data_button">Delete My GPS Data</string>
     <string name="delete_all_gps_data_button">Delete All GPS Data</string>
@@ -180,4 +180,27 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="imprint">Imprint</string>
     <string name="my_user_data">My User Data</string>
+    <string name="radio_call_name_format">Radio Call Name</string>
+    <string name="saved">Saved</string>
+    <string name="report">Report</string>
+    <string name="report_description_input_field">Describe the course of the operation here…</string>
+    <string name="send">Send</string>
+    <string name="send_report_title">Send report?</string>
+    <string name="send_report_message">Do you want to send the report? It will then be forwarded to the operations management of the team. This process cannot be undone.</string>
+    <string name="select_date">Select Date</string>
+    <string name="report_info_text">Each operation should be documented in a mission report by every responder. This report should briefly describe the course of the operation. Special attention should be given to any particularities and difficulties encountered during the mission. The content will be treated confidentially. Please note that attachments cannot be submitted as part of the report via the app.</string>
+    <string name="password_reset_title">Password Reset</string>
+    <string name="password_reset_info_text">To reset your email address, please start by selecting your organization. Then, enter the email address you were registered with by your organization for this app. Finally, confirm your entries. If the information is correct, you will receive an email with further instructions.</string>
+    <string name="reset">Reset</string>
+    <string name="reset_password_title">Reset</string>
+    <string name="reset_password_message">Are you sure you want to reset your password? Afterward, your account will be logged out from all devices, and you will need to sign in again on each device.</string>
+    <string name="my_local_track_color">My local track color</string>
+    <string name="my_local_track_color_change">Change my local track color</string>
+    <string name="legal">Legal</string>
+    <string name="area_info_title">Area title</string>
+    <string name="area_info_more">More Information… </string>
+
+
+
+
 </resources>
