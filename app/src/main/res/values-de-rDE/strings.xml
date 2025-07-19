@@ -158,8 +158,8 @@
     <string name="export_gpx_button">Alle Tracks als .gpx Datei exportieren</string>
     <string name="my_track_title">Mein Track</string>
     <string name="no_own_track">Kein eigener Track vorhanden</string>
-    <string name="waypoint_count">Anzahl Wegpunkte: %1$d</string>
-    <string name="total_length">Gesamtlänge: %.1f m</string>
+    <string name="waypoint_count">Anzahl Wegpunkte</string>
+    <string name="total_length">Gesamtlänge</string>
     <string name="all_users_title">Alle Benutzer</string>
     <string name="no_tracks_available">Keine Tracks vorhanden</string>
     <string name="confirm_delete_my_track_title">⚠️ Meine GPS Daten Löschen</string>

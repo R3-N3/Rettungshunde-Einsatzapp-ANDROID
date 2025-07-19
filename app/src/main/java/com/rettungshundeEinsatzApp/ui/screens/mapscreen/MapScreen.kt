@@ -129,7 +129,6 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val db = AllUserDataProvider.getDatabase(context)
     val locationDao = db.allUsersLocationsDao()
     val userDao = db.allUserDataDao()
-    val mapCenteredOnce by viewModel.mapCenteredOnce
     val areaCornerMarkers = remember { mutableStateListOf<Marker>() }
     var areaName by rememberSaveable { mutableStateOf("") }
     var areaDescription by remember { mutableStateOf("") }
@@ -252,9 +251,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
 
                 // States & Flags
                 drawAreaMode = drawAreaMode,
-                mapCenteredOnce = mapCenteredOnce,
-
-                // Function
+                mapCenteredOnce = viewModel.mapCenteredOnce,
                 markAsCentered = { viewModel.markAsCentered() },
 
                 // Area-Editing-States

@@ -31,7 +31,6 @@ import com.rettungshundeEinsatzApp.database.mylocallocation.MyLocationEntity
 import com.rettungshundeEinsatzApp.service.myLocation.MyLocationLatLongToMGRS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.osmdroid.util.BoundingBox
 import org.osmdroid.views.overlay.ScaleBarOverlay
 import org.osmdroid.views.overlay.infowindow.InfoWindow
 import java.io.File
@@ -69,9 +68,7 @@ fun MapViewContainer(
 
     // States & Flags
     drawAreaMode: Boolean,
-    mapCenteredOnce: Boolean,
-
-    // Function
+    mapCenteredOnce: State<Boolean>,
     markAsCentered: () -> Unit,
 
     // Area-Editing-States
@@ -234,7 +231,7 @@ fun MapViewContainer(
                             override fun onClose() {}
                         }
 
-                        setOnClickListener { polygon, mapView, eventPos ->
+                        setOnClickListener { polygon, mapView, _ ->
                             InfoWindow.closeAllInfoWindowsOn(mapView)
                             polygon.showInfoWindow()
                             true
@@ -488,15 +485,13 @@ fun MapViewContainer(
                     }
                 }
 
-                // Center to my position
-                if (!mapCenteredOnce && map.width > 0 && map.height > 0) {
-                    val allPoints = (myGeoPoints + allLocations.map { GeoPoint(it.latitude, it.longitude) })
-                    if (allPoints.isNotEmpty()) {
-                        val boundingBox = BoundingBox.fromGeoPointsSafe(allPoints)
-                        map.zoomToBoundingBox(boundingBox, true, 100)
-                        markAsCentered()
-                    }
-
+                // Center to my position with fixed zoom
+                if (!mapCenteredOnce.value && map.width > 0 && map.height > 0 && myGeoPoints.isNotEmpty()) {
+                    val myLastLocation = myGeoPoints.last()
+                    map.controller.setCenter(myLastLocation)
+                    map.controller.setZoom(16.0)
+                    markAsCentered()
+                    Log.d("MapViewContainer", "zoom map to own position: $myLastLocation")
                 }
 
             }
