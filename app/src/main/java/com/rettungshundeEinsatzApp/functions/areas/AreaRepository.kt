@@ -21,7 +21,7 @@ class AreaRepository(
         }
 
         AreaDownloadManager.isDownloadingAreas = true
-        Log.d("uploadAreasToServer", "\uD83D\uDFE2 start downloadAreasFromServer")
+        Log.d("downloadAreasfromServer", "\uD83D\uDFE2 start downloadAreasFromServer")
 
         try {
             val response = apiService.downloadAreas(mapOf("token" to token))
@@ -54,7 +54,7 @@ class AreaRepository(
                         areaDao.insertCoordinates(coordinates)
                     }
 
-                    Log.d("uploadAreasToServer", "✅ area synced")
+                    Log.d("downloadAreasfromServer", "✅ area synced")
                     Pair(true, body.message)
 
                 } else {
@@ -66,7 +66,7 @@ class AreaRepository(
 
         } catch (e: Exception) {
             AreaDownloadManager.isDownloadingAreas = false
-            Log.e("uploadAreasToServer", "❌ Error: ${e.localizedMessage}")
+            Log.e("downloadAreasfromServer", "❌ Error: ${e.localizedMessage}")
             Pair(false, e.localizedMessage ?: context.getString(R.string.error))
         }
     }
@@ -133,7 +133,7 @@ class AreaRepository(
             }
 
         } catch (e: Exception) {
-            Log.e("uploadAreasToServer", "❌ Exception: ${e.localizedMessage}")
+            Log.e("uploadAreasToServer", "❌ FULL Exception", e)
             return@withContext Pair(false, e.localizedMessage ?: context.getString(R.string.error))
         }
     }
