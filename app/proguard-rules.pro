@@ -28,8 +28,7 @@
 # -----------------------------
 
 # Bewahre alle Generics und Annotationen – wichtig für TypeToken und Retrofit/Gson
--keepattributes Signature
--keepattributes *Annotation*
+-keepattributes Signature, InnerClasses, EnclosingMethod, *Annotation*
 -keepattributes RuntimeVisibleAnnotations
 -keepattributes RuntimeInvisibleAnnotations
 
@@ -76,4 +75,48 @@
 # Gson: Felder mit @SerializedName
 -keepclassmembers class * {
     @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# 🚫 Verhindere Proxy-Probleme bei Retrofit
+-keepclassmembers class * implements java.lang.reflect.InvocationHandler {
+    <methods>;
+}
+
+# 🚫 Behalte Retrofit intern erzeugte Proxys vollständig
+-keep class **$Proxy* { *; }
+
+# 🚫 Verhindere Shrinking/Obfuscation von Interfaces (für Proxy-Nutzung)
+-keep interface * {
+    *;
+}
+
+
+
+
+
+# Spezifisch für Retrofit 2.x
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+
+-keep class kotlin.coroutines.** { *; }
+
+# Behalte die Retrofit Response-Klasse und ihre Methoden
+-keep class retrofit2.Response {
+    *;
+}
+
+# 🚨 Stelle sicher, dass generische Signaturen erhalten bleiben
+-keepattributes Signature
+
+# 🚨 Erzwinge das Beibehalten von Generics in ALLEN Klassen
+-keep class * {
+    <fields>;
+    <methods>;
+    <init>(...);
+}
+-keepclassmembers class * {
+    <fields>;
+    <methods>;
+    <init>(...);
 }
