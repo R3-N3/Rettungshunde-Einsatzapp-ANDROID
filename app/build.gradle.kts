@@ -37,10 +37,10 @@ android {
 
     defaultConfig {
         applicationId = "com.RettungshundeEinsatzApp"
-        minSdk = 31
+        minSdk = 29
         targetSdk = 36
-        versionCode = 63
-        versionName = "1.0.0"
+        versionCode = 64
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -120,7 +120,7 @@ fun MapScreen(onStartGPS: () -> Unit, onStopGPS: () -> Unit){
     val token: String = sharedPreferences.getString("token", "").toString()
     val serverApiURL = sharedPreferences.getString("serverApiURL", "").toString()
     val myUserName = sharedPreferences.getString("username", "").toString()
-    val radioCallName = sharedPreferences.getString("radiocallname", "").toString()
+    val radioCallName = sharedPreferences.getString("radioCallName", "").toString()
     val securityLevel = sharedPreferences.getString("securityLevel", "1")?.toIntOrNull() ?: 1
     val myLocationDatabase = MyLocationDatabase.getDatabase(context)
     val viewModel: MyTrackViewModel = viewModel(factory = MyTrackViewModel.Factory(myLocationDatabase.locationDao()))
