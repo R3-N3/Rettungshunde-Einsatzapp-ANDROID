@@ -1,5 +1,8 @@
 package com.rettungshundeEinsatzApp.ui
 
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
@@ -8,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 
 
@@ -43,46 +47,27 @@ private val DarkColorScheme = darkColorScheme(
     onError = Color.Black
 )
 
-/*
-@Composable
-fun ReaAppThemeWithOwnColor(
-    content: @Composable () -> Unit
-) {
-    val darkTheme = isSystemInDarkTheme()
-    val colorScheme = if (darkTheme) {
-        DarkColorScheme
-    } else {
-        LightColorScheme
-    }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        //typography = Typography, // optional definition of text
-        //shapes = Shapes, // optional definition of shapes
-        content = content
-    )
-}
-*/
+@RequiresApi(Build.VERSION_CODES.S)
+private fun dynamicScheme(context: Context, dark: Boolean) =
+    if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 
 @Composable
 fun ReaAppTheme(
-    useDynamicColor: Boolean = true,
+    useDynamicColor: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
     val darkTheme = isSystemInDarkTheme()
+    val dynamic = useDynamicColor
 
-    val colorScheme = when {
-        useDynamicColor -> {
-            if (darkTheme) dynamicDarkColorScheme(context)
-            else dynamicLightColorScheme(context)
+    val colorScheme = remember(context, darkTheme, dynamic) {
+        if (dynamic && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            runCatching { dynamicScheme(context, darkTheme) }
+                .getOrElse { if (darkTheme) DarkColorScheme else LightColorScheme }
+        } else {
+            if (darkTheme) DarkColorScheme else LightColorScheme
         }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        content = content
-    )
+    MaterialTheme(colorScheme = colorScheme, content = content)
 }

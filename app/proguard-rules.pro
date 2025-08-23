@@ -85,15 +85,6 @@
 # 🚫 Behalte Retrofit intern erzeugte Proxys vollständig
 -keep class **$Proxy* { *; }
 
-# 🚫 Verhindere Shrinking/Obfuscation von Interfaces (für Proxy-Nutzung)
--keep interface * {
-    *;
-}
-
-
-
-
-
 # Spezifisch für Retrofit 2.x
 -keepclasseswithmembers class * {
     @retrofit2.http.* <methods>;
@@ -108,15 +99,3 @@
 
 # 🚨 Stelle sicher, dass generische Signaturen erhalten bleiben
 -keepattributes Signature
-
-# 🚨 Erzwinge das Beibehalten von Generics in ALLEN Klassen
--keep class * {
-    <fields>;
-    <methods>;
-    <init>(...);
-}
--keepclassmembers class * {
-    <fields>;
-    <methods>;
-    <init>(...);
-}

@@ -3,8 +3,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("plugin.serialization") version "1.9.21"
-    id("com.google.devtools.ksp") version "1.9.22-1.0.17"
+    alias(libs.plugins.compose.compiler)
+    id("com.google.devtools.ksp") version "2.1.20-2.0.1"
 }
 
 android {
@@ -39,8 +39,8 @@ android {
         applicationId = "com.RettungshundeEinsatzApp"
         minSdk = 29
         targetSdk = 36
-        versionCode = 64
-        versionName = "1.0.1"
+        versionCode = 65
+        versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -57,11 +57,11 @@ android {
 
         release {
             isMinifyEnabled = true
-            isShrinkResources = true // Entfernt ungenutzte Ressourcen
-            isDebuggable = false // Nur Debug-Builds sollen debugfähig sein
+            isShrinkResources = true
+            isDebuggable = false
 
             ndk {
-                debugSymbolLevel = "FULL" // Alternativ "FULL" für symbolisierte Abstürze in Crashlytics
+                debugSymbolLevel = "FULL"
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -84,13 +84,10 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
-        viewBinding = true
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8" // muss zut kotlin Version passen, 1.5.8 ist kompatibel zu kotlin 1.9.22
-    }
+
     packaging {
         resources {
             excludes += listOf(
@@ -104,8 +101,9 @@ android {
 // deiner App das Schema-Verzeichnis über KSP mitgeben:
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
+    arg("room.generateKotlin", "true")
 }
-
 
 configurations.all {
     exclude(group = "org.xmlpull", module = "xmlpull")
