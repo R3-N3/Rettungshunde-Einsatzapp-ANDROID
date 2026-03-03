@@ -2,9 +2,8 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
-    id("com.google.devtools.ksp") version "2.1.20-2.0.1"
+    id("com.google.devtools.ksp") version "2.3.6"
 }
 
 android {
@@ -39,8 +38,8 @@ android {
         applicationId = "com.RettungshundeEinsatzApp"
         minSdk = 29
         targetSdk = 36
-        versionCode = 65
-        versionName = "1.0.2"
+        versionCode = 66
+        versionName = "1.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -80,9 +79,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -96,6 +93,36 @@ android {
             )
         }
     }
+
+    sourceSets {
+        getByName("debug") {
+            java.directories.addAll(
+                listOf(
+                    "build/generated/ksp/debug/kotlin",
+                    "build/generated/ksp/debug/java"
+                )
+            )
+        }
+        getByName("release") {
+            java.directories.addAll(
+                listOf(
+                    "build/generated/ksp/release/kotlin",
+                    "build/generated/ksp/release/java"
+                )
+            )
+        }
+    }
+
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+}
+
+composeCompiler {
+    includeComposeMappingFile.set(false)
 }
 
 // deiner App das Schema-Verzeichnis über KSP mitgeben:
@@ -122,4 +149,5 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.osmdroid.android)
     implementation(libs.colorpicker.compose)
+    implementation(platform(libs.androidx.compose.bom))
 }
